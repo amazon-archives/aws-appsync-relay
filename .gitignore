@@ -1,0 +1,4 @@
+/.environment
+/node_modules/
+/dist/
+/.cfn-tmp/

@@ -1,0 +1,12 @@
+type Query {
+	viewer: Viewer!
+}
+
+type Viewer {
+	id: ID!
+	message: String!
+}
+
+schema {
+	query: Query
+}

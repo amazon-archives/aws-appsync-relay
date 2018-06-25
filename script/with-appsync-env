@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -e
+
+project_root="$(dirname $BASH_SOURCE)/.."
+source "$project_root/script/source"
+ensure-env
+
+jq_prog='.Stacks[0].Outputs | map({key: .OutputKey, value: .OutputValue}) | from_entries'
+echo "Fetching config for CloudFormation stack..."
+export APPSYNC_CONFIG="$(aws cloudformation describe-stacks --stack-name $STACK_NAME | jq "$jq_prog")"
+
+"$@"

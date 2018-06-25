@@ -1,0 +1,48 @@
+#! /bin/bash
+
+set -e
+
+project_root="$(dirname $BASH_SOURCE)/.."
+source "$project_root/script/source"
+ensure-env
+
+# NOTE: These fns are Mac-only now
+sed-inline() {
+    sed -i '' "$@"
+}
+
+md5-quiet() {
+    md5 -q "$@"
+}
+
+echo "Packaging handler..."
+zip_src_dir="$project_root/handler"
+zip_dest_file="$project_root/backend/resources/handler.zip"
+rm "$zip_dest_file" || true
+(cd "$zip_src_dir" && zip -r "$zip_dest_file" .)
+
+echo "Generating template..."
+tmp_dir="$project_root/.cfn-tmp"
+mkdir -p "$tmp_dir"
+cp "$project_root/backend/template.yml" "$tmp_dir/template.yml"
+
+echo "Uploading template resources..."
+mkdir -p "$tmp_dir/resources"
+for file in "$project_root/backend/resources"/* ; do
+    name="$(basename $file)"
+    new_name="${name%.*}-$(md5-quiet $file).${name##*.}"
+    dest="$tmp_dir/resources/$new_name"
+    [[ -f $dest ]] || cp "$file" "$dest"
+    sed-inline "s_{{$name}}_s3://$S3_BUCKET/resources/${new_name}_" "$tmp_dir/template.yml"
+done
+aws s3 sync "$tmp_dir/resources" "s3://$S3_BUCKET/resources"
+
+echo "Uploading web resources..."
+aws s3 sync "$project_root/dist" "s3://$S3_BUCKET/dist" --acl public-read
+bundle_name=$(basename "$project_root/dist/"bundle.*.js)
+sed-inline "s_{{bundle.js}}_//${S3_BUCKET}.s3.amazonaws.com/dist/${bundle_name}_" "$tmp_dir/template.yml"
+
+
+echo "Updating stack..."
+aws cloudformation deploy --stack-name "$STACK_NAME" --template-file "$tmp_dir/template.yml" \
+    --capabilities CAPABILITY_NAMED_IAM

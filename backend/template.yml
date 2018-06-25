@@ -1,0 +1,98 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  AppsyncLogRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${AWS::StackName}_appsync_log_role
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+            - sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service:
+              - appsync.amazonaws.com
+      Policies:
+      - PolicyName: !Sub ${AWS::StackName}_appsync_log_policy
+        PolicyDocument:
+          Statement:
+          - Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Effect: Allow
+            Resource:
+              - arn:aws:logs:*:*:*
+  GraphQLApi:
+    Type: AWS::AppSync::GraphQLApi
+    Properties:
+      Name: !Sub ${AWS::StackName}_api
+      AuthenticationType: API_KEY
+      LogConfig:
+        CloudWatchLogsRoleArn: !GetAtt AppsyncLogRole.Arn
+        FieldLogLevel: ALL
+  GraphQLApiKey:
+    Type: AWS::AppSync::ApiKey
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+  GraphQLSchema:
+    Type: AWS::AppSync::GraphQLSchema
+    Properties:
+      DefinitionS3Location: {{schema.graphql}}
+      ApiId: !GetAtt GraphQLApi.ApiId
+  LocalSource:
+    Type: AWS::AppSync::DataSource
+    Properties:
+      Name: !Sub ${AWS::StackName}_local_datasource
+      Type: NONE
+      ApiId: !GetAtt GraphQLApi.ApiId
+  MessageResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      TypeName: Query
+      FieldName: viewer
+      DataSourceName: !GetAtt LocalSource.Name
+      RequestMappingTemplateS3Location: {{Empty.request.mapping}}
+      ResponseMappingTemplate: '{}'
+  MessageResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      TypeName: Viewer
+      FieldName: message
+      DataSourceName: !GetAtt LocalSource.Name
+      RequestMappingTemplateS3Location: {{Empty.request.mapping}}
+      ResponseMappingTemplate: '"hello"'
+  HttpEndpoint:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs6.10
+      CodeUri: {{handler.zip}}
+      Environment:
+        Variables:
+          APPSYNC_CONFIG: !Sub |
+
+            {
+              "Endpoint": "${GraphQLApi.GraphQLUrl}",
+              "Key": "${GraphQLApiKey.ApiKey}",
+              "Region": "${AWS::Region}"
+            }
+
+          BUNDLE_URL: {{bundle.js}}
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /
+            Method: GET
+Outputs:
+  Endpoint:
+    Value: !GetAtt GraphQLApi.GraphQLUrl
+  Key:
+    Value: !GetAtt GraphQLApiKey.ApiKey
+  Region:
+    Value: !Ref AWS::Region
