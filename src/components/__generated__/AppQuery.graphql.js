@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash dedd6fead4002f969af38a68eb4e7634
+ * @relayHash 3509316e67d822a8b2ca85112d490def
  */
 
 /* eslint-disable */
@@ -10,10 +10,10 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 type TodoList_viewer$ref = any;
-export type HelloQueryVariables = {|
+export type AppQueryVariables = {|
   count?: ?number
 |};
-export type HelloQueryResponse = {|
+export type AppQueryResponse = {|
   +viewer: {|
     +$fragmentRefs: TodoList_viewer$ref
   |}
@@ -22,7 +22,7 @@ export type HelloQueryResponse = {|
 
 
 /*
-query HelloQuery(
+query AppQuery(
   $count: Int
 ) {
   viewer {
@@ -60,13 +60,13 @@ var v0 = [
 return {
   "kind": "Request",
   "operationKind": "query",
-  "name": "HelloQuery",
+  "name": "AppQuery",
   "id": null,
-  "text": "query HelloQuery(\n  $count: Int\n) {\n  viewer {\n    ...TodoList_viewer_yu5n1\n  }\n}\n\nfragment TodoList_viewer_yu5n1 on Viewer {\n  listTodos(first: $count) {\n    edges {\n      node {\n        id\n        text\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n",
+  "text": "query AppQuery(\n  $count: Int\n) {\n  viewer {\n    ...TodoList_viewer_yu5n1\n  }\n}\n\nfragment TodoList_viewer_yu5n1 on Viewer {\n  listTodos(first: $count) {\n    edges {\n      node {\n        id\n        text\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n",
   "metadata": {},
   "fragment": {
     "kind": "Fragment",
-    "name": "HelloQuery",
+    "name": "AppQuery",
     "type": "Query",
     "metadata": null,
     "argumentDefinitions": v0,
@@ -98,7 +98,7 @@ return {
   },
   "operation": {
     "kind": "Operation",
-    "name": "HelloQuery",
+    "name": "AppQuery",
     "argumentDefinitions": v0,
     "selections": [
       {
@@ -235,5 +235,5 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'eea9ec3d5ad47f5fa6001b49c86c3ad8';
+(node/*: any*/).hash = 'ca9ad9f14ca50dcb2800d87b556a4049';
 module.exports = node;
