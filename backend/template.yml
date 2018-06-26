@@ -42,13 +42,83 @@ Resources:
     Properties:
       DefinitionS3Location: {{schema.graphql}}
       ApiId: !GetAtt GraphQLApi.ApiId
+  Table:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub ${AWS::StackName}_table
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: userId
+          AttributeType: S
+        - AttributeName: createdAt
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      GlobalSecondaryIndexes:
+        - IndexName: CreatedAtIndex
+          KeySchema:
+            - AttributeName: userId
+              KeyType: HASH
+            - AttributeName: createdAt
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
+  DynamoDBRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${AWS::StackName}_datasource_role
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+            - sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service:
+              - appsync.amazonaws.com
+      Policies:
+      - PolicyName: !Sub ${AWS::StackName}_datasource_policy
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+          - Action:
+              - dynamodb:GetItem
+              - dynamodb:PutItem
+              - dynamodb:DeleteItem
+              - dynamodb:UpdateItem
+              - dynamodb:Query
+              - dynamodb:Scan
+              - dynamodb:BatchGetItem
+              - dynamodb:BatchWriteItem
+            Effect: Allow
+            Resource:
+            - !GetAtt Table.Arn
+            - !Sub ${Table.Arn}/*
+  DynamoSource:
+    Type: AWS::AppSync::DataSource
+    Properties:
+      Name: !Sub ${AWS::StackName}_dynamo_datasource
+      Type: AMAZON_DYNAMODB
+      ServiceRoleArn: !GetAtt DynamoDBRole.Arn
+      ApiId: !GetAtt GraphQLApi.ApiId
+      DynamoDBConfig:
+        TableName: !Ref Table
+        AwsRegion: !Ref AWS::Region
+        UseCallerCredentials: false
   LocalSource:
     Type: AWS::AppSync::DataSource
     Properties:
       Name: !Sub ${AWS::StackName}_local_datasource
       Type: NONE
       ApiId: !GetAtt GraphQLApi.ApiId
-  MessageResolver:
+  ViewerResolver:
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt GraphQLApi.ApiId
@@ -57,15 +127,15 @@ Resources:
       DataSourceName: !GetAtt LocalSource.Name
       RequestMappingTemplateS3Location: {{Empty.request.mapping}}
       ResponseMappingTemplate: '{}'
-  MessageResolver:
+  ListTodosResolver:
     Type: AWS::AppSync::Resolver
     Properties:
       ApiId: !GetAtt GraphQLApi.ApiId
       TypeName: Viewer
-      FieldName: message
-      DataSourceName: !GetAtt LocalSource.Name
-      RequestMappingTemplateS3Location: {{Empty.request.mapping}}
-      ResponseMappingTemplate: '"hello"'
+      FieldName: listTodos
+      DataSourceName: !GetAtt DynamoSource.Name
+      RequestMappingTemplateS3Location: {{Viewer.listTodos.request.mapping}}
+      ResponseMappingTemplateS3Location: {{Connection.response.mapping}}
   HttpEndpoint:
     Type: AWS::Serverless::Function
     Properties:

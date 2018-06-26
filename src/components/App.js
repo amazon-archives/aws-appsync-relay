@@ -1,6 +1,7 @@
 import React from 'react';
 import { QueryRenderer, graphql } from 'react-relay';
 
+import TodoList from './TodoList';
 import environment from '../environment';
 
 export default class Hello extends React.Component {
@@ -8,10 +9,11 @@ export default class Hello extends React.Component {
     return (
       <QueryRenderer
         environment={environment}
+        variables={{count: 5}}
         query={graphql`
-          query HelloQuery {
+          query HelloQuery($count: Int) {
             viewer {
-              message
+              ...TodoList_viewer @arguments(count: $count)
             }
           }
         `}
@@ -19,7 +21,7 @@ export default class Hello extends React.Component {
           if (error) {
             return <div>{error.message}</div>;
           } else if (props) {
-            return <div>{props.viewer.message}</div>;
+            return <TodoList viewer={props.viewer} />;
           }
           return <div>Loading...</div>;
         }}

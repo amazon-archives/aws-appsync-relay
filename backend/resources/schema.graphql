@@ -1,12 +1,44 @@
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  endCursor: String
+  startCursor: String
+}
+
+interface Node {
+  id: ID!
+}
+
+type Todo implements Node {
+  id: ID!
+  userId: ID!
+  createdAt: String!
+  text: String
+  complete: Boolean!
+}
+
+type TodoConnection {
+  items: [Todo!]
+  nextToken: String
+  edges: [TodoEdge!]
+  pageInfo: PageInfo!
+}
+
+type TodoEdge {
+  node: Todo!
+  cursor: String
+}
+
+
 type Query {
-	viewer: Viewer!
+  viewer: Viewer!
+  node(id: ID!): Node
 }
 
 type Viewer {
-	id: ID!
-	message: String!
+  listTodos(after: String, first: Int): TodoConnection!
 }
 
 schema {
-	query: Query
+  query: Query
 }

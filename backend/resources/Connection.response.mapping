@@ -1,0 +1,11 @@
+#set($edges = [])
+#foreach($item in $ctx.result.items)
+$util.qr($edges.add({"node": $item}))
+#end
+{ "edges": $util.toJson($edges),
+  "pageInfo": {
+    "hasPreviousPage": false,
+    "hasNextPage": #if($ctx.result.nextToken) true #else false #end,
+    "endCursor": #if($ctx.result.nextToken) "$ctx.result.nextToken" #else null #end
+  }
+}

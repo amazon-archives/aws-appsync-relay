@@ -2,7 +2,7 @@ import Amplify, {Analytics} from 'aws-amplify';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import Hello from './components/Hello';
+import App from './components/App';
 
 const AC = APPSYNC_CONFIG;
 
@@ -17,6 +17,6 @@ Amplify.configure({
 const root = document.createElement('div');
 document.body.appendChild(root);
 ReactDOM.render(
-  <Hello />,
+  <App/>,
   root
 );

@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash dedd6fead4002f969af38a68eb4e7634
+ * @relayHash 95b820b9bac1789664eb0b29f163b692
  */
 
 /* eslint-disable */
@@ -10,10 +10,11 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 type TodoList_viewer$ref = any;
-export type HelloQueryVariables = {|
-  count?: ?number
+export type TodoListPaginationQueryVariables = {|
+  count: number,
+  cursor?: ?string,
 |};
-export type HelloQueryResponse = {|
+export type TodoListPaginationQueryResponse = {|
   +viewer: {|
     +$fragmentRefs: TodoList_viewer$ref
   |}
@@ -22,16 +23,17 @@ export type HelloQueryResponse = {|
 
 
 /*
-query HelloQuery(
-  $count: Int
+query TodoListPaginationQuery(
+  $count: Int!
+  $cursor: String
 ) {
   viewer {
-    ...TodoList_viewer_yu5n1
+    ...TodoList_viewer_1G22uz
   }
 }
 
-fragment TodoList_viewer_yu5n1 on Viewer {
-  listTodos(first: $count) {
+fragment TodoList_viewer_1G22uz on Viewer {
+  listTodos(first: $count, after: $cursor) {
     edges {
       node {
         id
@@ -53,20 +55,26 @@ var v0 = [
   {
     "kind": "LocalArgument",
     "name": "count",
-    "type": "Int",
+    "type": "Int!",
+    "defaultValue": null
+  },
+  {
+    "kind": "LocalArgument",
+    "name": "cursor",
+    "type": "String",
     "defaultValue": null
   }
 ];
 return {
   "kind": "Request",
   "operationKind": "query",
-  "name": "HelloQuery",
+  "name": "TodoListPaginationQuery",
   "id": null,
-  "text": "query HelloQuery(\n  $count: Int\n) {\n  viewer {\n    ...TodoList_viewer_yu5n1\n  }\n}\n\nfragment TodoList_viewer_yu5n1 on Viewer {\n  listTodos(first: $count) {\n    edges {\n      node {\n        id\n        text\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n",
+  "text": "query TodoListPaginationQuery(\n  $count: Int!\n  $cursor: String\n) {\n  viewer {\n    ...TodoList_viewer_1G22uz\n  }\n}\n\nfragment TodoList_viewer_1G22uz on Viewer {\n  listTodos(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        text\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n",
   "metadata": {},
   "fragment": {
     "kind": "Fragment",
-    "name": "HelloQuery",
+    "name": "TodoListPaginationQuery",
     "type": "Query",
     "metadata": null,
     "argumentDefinitions": v0,
@@ -89,6 +97,12 @@ return {
                 "name": "count",
                 "variableName": "count",
                 "type": null
+              },
+              {
+                "kind": "Variable",
+                "name": "cursor",
+                "variableName": "cursor",
+                "type": null
               }
             ]
           }
@@ -98,7 +112,7 @@ return {
   },
   "operation": {
     "kind": "Operation",
-    "name": "HelloQuery",
+    "name": "TodoListPaginationQuery",
     "argumentDefinitions": v0,
     "selections": [
       {
@@ -116,6 +130,12 @@ return {
             "name": "listTodos",
             "storageKey": null,
             "args": [
+              {
+                "kind": "Variable",
+                "name": "after",
+                "variableName": "cursor",
+                "type": "String"
+              },
               {
                 "kind": "Variable",
                 "name": "first",
@@ -210,6 +230,12 @@ return {
             "args": [
               {
                 "kind": "Variable",
+                "name": "after",
+                "variableName": "cursor",
+                "type": "String"
+              },
+              {
+                "kind": "Variable",
                 "name": "first",
                 "variableName": "count",
                 "type": "Int"
@@ -235,5 +261,5 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'eea9ec3d5ad47f5fa6001b49c86c3ad8';
+(node/*: any*/).hash = '96b5b1e5a70ab7f02d5793b185926213';
 module.exports = node;

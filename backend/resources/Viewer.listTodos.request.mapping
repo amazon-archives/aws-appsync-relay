@@ -1,0 +1,17 @@
+{
+    "version" : "2017-02-28",
+    "operation" : "Query",
+    "query" : {
+        "expression" : "userId = :u",
+        "expressionValues" : {
+            ## Just one global user for now
+            ":u" : {"S": "0"}
+        }
+    },
+    "index" : "CreatedAtIndex",
+    "nextToken": #if($ctx.args.after) "$ctx.args.after" #else null #end,
+	"limit": #if($ctx.args.first) $ctx.args.first #else 10 #end,
+    "scanIndexForward" : true,
+    "consistentRead" : false,
+    "select" : "ALL_ATTRIBUTES",
+}
