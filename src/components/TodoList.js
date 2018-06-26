@@ -10,14 +10,14 @@ import Typography from '@material-ui/core/Typography';
 class TodoList extends React.Component {
   render() {
     let edges = this.props.viewer.listTodos.edges;
-    if (false) {
-    return (<List>
+    if (edges) {
+      return (<List>
               {edges.map((todo) => (
                 <ListItem key={todo.node.id}>
                   <Checkbox/>
                   <ListItemText>{todo.node.text}</ListItemText>
                 </ListItem>))}
-            </List>);
+              </List>);
     } else {
       return <Typography align="center" style={{margin: '20px'}}>You don't have anything to do!</Typography>;
     }
