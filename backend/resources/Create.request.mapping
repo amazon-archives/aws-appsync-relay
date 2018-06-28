@@ -1,0 +1,12 @@
+#set($input = $ctx.args.input)
+#set($input.createdAt = $util.time.nowISO8601())
+## Just one user for now
+#set($input.userId = "0")
+{
+    "version" : "2017-02-28",
+    "operation" : "PutItem",
+    "key" : {
+        "id": $util.dynamodb.toDynamoDBJson($util.autoId())
+    },
+    "attributeValues" : $util.dynamodb.toMapValuesJson($input)
+}

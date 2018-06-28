@@ -5,12 +5,28 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Checkbox from '@material-ui/core/Checkbox';
 import Typography from '@material-ui/core/Typography';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 
 class TodoList extends React.Component {
   render() {
-    let edges = this.props.viewer.listTodos.edges;
-    if (edges) {
+    let TodoStatus = (props) => {
+      return (<div style={{display: 'flex', justifyContent: 'center', padding: '20px'}}>
+              {props.loading && <CircularProgress/>}
+              {props.text && <Typography align="center" style={props.error && {color: 'red'}}>{props.text}</Typography>}
+              </div>);
+    };
+    if (this.props.error) {
+      return <TodoStatus error text="There was an error loading Todos from the server."/>;
+    }
+    let viewer = this.props.viewer;
+    if (!viewer) {
+      return <TodoStatus loading />;
+    }
+    let edges = viewer.listTodos.edges;
+    if (edges.length === 0) {
+      return <TodoStatus text="You don't have anything to do!"/>;
+    } else {
       return (<List>
               {edges.map((todo) => (
                 <ListItem key={todo.node.id}>
@@ -18,8 +34,6 @@ class TodoList extends React.Component {
                   <ListItemText>{todo.node.text}</ListItemText>
                 </ListItem>))}
               </List>);
-    } else {
-      return <Typography align="center" style={{margin: '20px'}}>You don't have anything to do!</Typography>;
     }
   }
 }

@@ -5,9 +5,8 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Paper from '@material-ui/core/Paper';
-import Grid from '@material-ui/core/Grid';
-import CircularProgress from '@material-ui/core/CircularProgress';
 
+import CreateTodo from './CreateTodo';
 import TodoList from './TodoList';
 import environment from '../environment';
 
@@ -34,14 +33,11 @@ export default class App extends React.Component {
                            ...TodoList_viewer @arguments(count: $count)
                          }
                        }`}
-                render={({error, props}) => {
-                  if (error) {
-                    return <div>{error.message}</div>;
-                  } else if (props) {
-                    return <TodoList viewer={props.viewer} />;
-                  }
-                  return <div style={{display: 'flex', justifyContent: 'center', padding: '20px'}}><CircularProgress/></div>;
-                }}
+                render={({error, props}) => (
+                  <React.Fragment>
+                    <CreateTodo/>
+                    <TodoList viewer={props && props.viewer} error={error}/>
+                  </React.Fragment>)}
                 />
         </Paper>
         </div>

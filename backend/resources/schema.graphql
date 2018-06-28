@@ -29,16 +29,31 @@ type TodoEdge {
   cursor: String
 }
 
+input CreateTodoInput {
+  text: String
+  complete: Boolean
+  clientMutationId: ID
+}
 
-type Query {
-  viewer: Viewer!
-  node(id: ID!): Node
+type TodoPayload {
+  node: Todo
+  clientMutationId: ID
 }
 
 type Viewer {
   listTodos(after: String, first: Int): TodoConnection!
 }
 
+type Query {
+  viewer: Viewer!
+  node(id: ID!): Node
+}
+
+type Mutation {
+  createTodo(input: CreateTodoInput!): TodoPayload!
+}
+
 schema {
   query: Query
+  mutation: Mutation
 }

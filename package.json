@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@material-ui/core": "^1.3.0",
+    "@material-ui/icons": "^1.1.0",
     "aws-amplify": "^0.4.6",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
