@@ -36,11 +36,12 @@ input CreateTodoInput {
 }
 
 type TodoPayload {
-  node: Todo
+  edge: TodoEdge
   clientMutationId: ID
 }
 
-type Viewer {
+type Viewer implements Node {
+  id: ID!
   listTodos(after: String, first: Int): TodoConnection!
 }
 

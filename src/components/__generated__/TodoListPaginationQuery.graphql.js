@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 95b820b9bac1789664eb0b29f163b692
+ * @relayHash 0973da211312fbc106dc3c92a0e13fbf
  */
 
 /* eslint-disable */
@@ -29,6 +29,7 @@ query TodoListPaginationQuery(
 ) {
   viewer {
     ...TodoList_viewer_1G22uz
+    id
   }
 }
 
@@ -64,13 +65,20 @@ var v0 = [
     "type": "String",
     "defaultValue": null
   }
-];
+],
+v1 = {
+  "kind": "ScalarField",
+  "alias": null,
+  "name": "id",
+  "args": null,
+  "storageKey": null
+};
 return {
   "kind": "Request",
   "operationKind": "query",
   "name": "TodoListPaginationQuery",
   "id": null,
-  "text": "query TodoListPaginationQuery(\n  $count: Int!\n  $cursor: String\n) {\n  viewer {\n    ...TodoList_viewer_1G22uz\n  }\n}\n\nfragment TodoList_viewer_1G22uz on Viewer {\n  listTodos(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        text\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n",
+  "text": "query TodoListPaginationQuery(\n  $count: Int!\n  $cursor: String\n) {\n  viewer {\n    ...TodoList_viewer_1G22uz\n    id\n  }\n}\n\nfragment TodoList_viewer_1G22uz on Viewer {\n  listTodos(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        text\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n",
   "metadata": {},
   "fragment": {
     "kind": "Fragment",
@@ -81,8 +89,8 @@ return {
     "selections": [
       {
         "kind": "LinkedField",
-        "alias": "viewer",
-        "name": "__viewer_viewer",
+        "alias": null,
+        "name": "viewer",
         "storageKey": null,
         "args": null,
         "concreteType": "Viewer",
@@ -164,13 +172,7 @@ return {
                     "concreteType": "Todo",
                     "plural": false,
                     "selections": [
-                      {
-                        "kind": "ScalarField",
-                        "alias": null,
-                        "name": "id",
-                        "args": null,
-                        "storageKey": null
-                      },
+                      v1,
                       {
                         "kind": "ScalarField",
                         "alias": null,
@@ -244,17 +246,9 @@ return {
             "handle": "connection",
             "key": "TodoList_listTodos",
             "filters": null
-          }
+          },
+          v1
         ]
-      },
-      {
-        "kind": "LinkedHandle",
-        "alias": null,
-        "name": "viewer",
-        "args": null,
-        "handle": "viewer",
-        "key": "",
-        "filters": null
       }
     ]
   }

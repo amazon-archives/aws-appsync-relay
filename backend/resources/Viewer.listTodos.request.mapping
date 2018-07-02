@@ -11,7 +11,7 @@
     "index" : "CreatedAtIndex",
     "nextToken": #if($ctx.args.after) "$ctx.args.after" #else null #end,
 	"limit": #if($ctx.args.first) $ctx.args.first #else 10 #end,
-    "scanIndexForward" : true,
+    "scanIndexForward" : false,
     "consistentRead" : false,
     "select" : "ALL_ATTRIBUTES",
 }

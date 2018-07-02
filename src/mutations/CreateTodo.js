@@ -5,15 +5,18 @@ const createMutation = graphql`
     $input: CreateTodoInput!
   ) {
     createTodo(input: $input) {
-      node {
-        complete
-        text
+      edge {
+        node {
+          complete
+          text
+        }
       }
     }
   }
 `;
 
-function createTodo(env, text) {
+var tempId = 0;
+function createTodo(env, viewerId, text) {
   const variables = {
     input: {
       text,
@@ -25,13 +28,29 @@ function createTodo(env, text) {
     {
       mutation: createMutation,
       variables,
-      onCompleted: (response, errors) => {
-        console.log('Response received from server.');
-      },
       onError: err => {
-        alert('Error', 'Unable to connect to network.');
-      }
-    }
+        alert('Unable to connect to network.');
+      },
+      optimisticResponse: {
+        createTodo: {
+          edge: {
+            node: {
+              id: 'Todo' + tempId++,
+              complete: false,
+              text: text
+            }
+          }
+        }
+      },
+      configs: [{
+        type: 'RANGE_ADD',
+        parentID: viewerId,
+        connectionInfo: [{
+          key: 'TodoList_listTodos',
+          rangeBehavior: 'prepend',
+        }],
+        edgeName: 'edge',
+      }]}
   );
 }
 

@@ -18,27 +18,34 @@ export default class CreateTodo extends React.Component {
     this.setState({newTodo: event.target.value});
   }
 
-  onClick(event) {
-    this.props.onAdd(this.state.newTodo);
+  onSubmit(event) {
+    if (this.state.newTodo) {
+      this.props.onAdd(this.state.newTodo);
+      this.setState({newTodo: ''});
+    }
+    // `return false` doesn't work in React
+    event.preventDefault();
   }
-
 
   render() {
     return (
-      <Grid container style={{padding: '30px 30px 0 30px'}} spacing={32}>
-        <Grid item xs={10}>
-          <FormControl fullWidth>
-            <InputLabel htmlFor="create-todo">New Todo</InputLabel>
-            <Input
-              id="create-todo"
-              value={this.state.newTodo}
-              onChange={this.onChange.bind(this)}
-              />
-          </FormControl>
+      <form onSubmit={this.onSubmit.bind(this)}>
+        <Grid container style={{padding: '30px 30px 0 30px'}} spacing={32}>
+          <Grid item xs={10}>
+            <FormControl fullWidth onSubmit={console.log}>
+              <InputLabel htmlFor="create-todo">New Todo</InputLabel>
+              <Input
+                id="create-todo"
+                value={this.state.newTodo}
+                onChange={this.onChange.bind(this)}
+                autoComplete="off"
+                />
+            </FormControl>
+          </Grid>
+          <Grid item xs={2} style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+            <Button color="secondary" variant="contained" size="small" type="submit">Add <AddIcon/></Button>
+          </Grid>
         </Grid>
-        <Grid item xs={2} style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-          <Button color="secondary" variant="contained" size="small" onClick={this.onClick.bind(this)}>Add <AddIcon/></Button>
-        </Grid>
-      </Grid>);
+      </form>);
   }
 }

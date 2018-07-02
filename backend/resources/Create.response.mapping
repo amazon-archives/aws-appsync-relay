@@ -1,1 +1,1 @@
-{"node": $util.toJson($ctx.result), "clientMutationId": "${context.arguments.input.clientMutationId}"}
+{"edge": {"node": $util.toJson($ctx.result)}, "clientMutationId": "${context.arguments.input.clientMutationId}"}

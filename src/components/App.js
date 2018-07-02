@@ -31,12 +31,13 @@ export default class App extends React.Component {
                 query={graphql`
                        query AppQuery($count: Int) {
                          viewer {
+                           id
                            ...TodoList_viewer @arguments(count: $count)
                          }
                        }`}
                 render={({error, props}) => (
                   <React.Fragment>
-                    <CreateTodo onAdd={(text) => createTodo(environment, text)} />
+                    <CreateTodo onAdd={(text) => createTodo(environment, props.viewer.id, text)} />
                     <TodoList viewer={props && props.viewer} error={error}/>
                   </React.Fragment>)}
                 />

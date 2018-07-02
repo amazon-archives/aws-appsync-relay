@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 3509316e67d822a8b2ca85112d490def
+ * @relayHash fd66f537fdcd1cbfb7c8e6fdb928bbad
  */
 
 /* eslint-disable */
@@ -15,7 +15,8 @@ export type AppQueryVariables = {|
 |};
 export type AppQueryResponse = {|
   +viewer: {|
-    +$fragmentRefs: TodoList_viewer$ref
+    +id: string,
+    +$fragmentRefs: TodoList_viewer$ref,
   |}
 |};
 */
@@ -26,6 +27,7 @@ query AppQuery(
   $count: Int
 ) {
   viewer {
+    id
     ...TodoList_viewer_yu5n1
   }
 }
@@ -56,13 +58,20 @@ var v0 = [
     "type": "Int",
     "defaultValue": null
   }
-];
+],
+v1 = {
+  "kind": "ScalarField",
+  "alias": null,
+  "name": "id",
+  "args": null,
+  "storageKey": null
+};
 return {
   "kind": "Request",
   "operationKind": "query",
   "name": "AppQuery",
   "id": null,
-  "text": "query AppQuery(\n  $count: Int\n) {\n  viewer {\n    ...TodoList_viewer_yu5n1\n  }\n}\n\nfragment TodoList_viewer_yu5n1 on Viewer {\n  listTodos(first: $count) {\n    edges {\n      node {\n        id\n        text\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n",
+  "text": "query AppQuery(\n  $count: Int\n) {\n  viewer {\n    id\n    ...TodoList_viewer_yu5n1\n  }\n}\n\nfragment TodoList_viewer_yu5n1 on Viewer {\n  listTodos(first: $count) {\n    edges {\n      node {\n        id\n        text\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n",
   "metadata": {},
   "fragment": {
     "kind": "Fragment",
@@ -73,13 +82,14 @@ return {
     "selections": [
       {
         "kind": "LinkedField",
-        "alias": "viewer",
-        "name": "__viewer_viewer",
+        "alias": null,
+        "name": "viewer",
         "storageKey": null,
         "args": null,
         "concreteType": "Viewer",
         "plural": false,
         "selections": [
+          v1,
           {
             "kind": "FragmentSpread",
             "name": "TodoList_viewer",
@@ -110,6 +120,7 @@ return {
         "concreteType": "Viewer",
         "plural": false,
         "selections": [
+          v1,
           {
             "kind": "LinkedField",
             "alias": null,
@@ -144,13 +155,7 @@ return {
                     "concreteType": "Todo",
                     "plural": false,
                     "selections": [
-                      {
-                        "kind": "ScalarField",
-                        "alias": null,
-                        "name": "id",
-                        "args": null,
-                        "storageKey": null
-                      },
+                      v1,
                       {
                         "kind": "ScalarField",
                         "alias": null,
@@ -220,20 +225,11 @@ return {
             "filters": null
           }
         ]
-      },
-      {
-        "kind": "LinkedHandle",
-        "alias": null,
-        "name": "viewer",
-        "args": null,
-        "handle": "viewer",
-        "key": "",
-        "filters": null
       }
     ]
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'ca9ad9f14ca50dcb2800d87b556a4049';
+(node/*: any*/).hash = '3c99c590f246d9606bc5b4169d5d0258';
 module.exports = node;

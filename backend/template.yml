@@ -126,7 +126,7 @@ Resources:
       FieldName: viewer
       DataSourceName: !GetAtt LocalSource.Name
       RequestMappingTemplateS3Location: {{Empty.request.mapping}}
-      ResponseMappingTemplate: '{}'
+      ResponseMappingTemplate: '{"id": "0"}'
   ListTodosResolver:
     Type: AWS::AppSync::Resolver
     Properties:
