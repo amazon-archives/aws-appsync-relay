@@ -30,13 +30,23 @@ type TodoEdge {
 }
 
 input CreateTodoInput {
-  text: String
+  text: String!
+  clientMutationId: ID
+}
+
+type CreateTodoPayload {
+  edge: TodoEdge
+  clientMutationId: ID
+}
+
+input UpdateTodoInput {
+  id: ID!
   complete: Boolean
   clientMutationId: ID
 }
 
-type TodoPayload {
-  edge: TodoEdge
+type UpdateTodoPayload {
+  node: Todo
   clientMutationId: ID
 }
 
@@ -51,7 +61,8 @@ type Query {
 }
 
 type Mutation {
-  createTodo(input: CreateTodoInput!): TodoPayload!
+  createTodo(input: CreateTodoInput!): CreateTodoPayload!
+  updateTodo(input: UpdateTodoInput!): UpdateTodoPayload!
 }
 
 schema {

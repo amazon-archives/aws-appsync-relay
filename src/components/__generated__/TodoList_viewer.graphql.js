@@ -8,6 +8,7 @@
 
 /*::
 import type { ConcreteFragment } from 'relay-runtime';
+type Todo_todo$ref = any;
 import type { FragmentReference } from "relay-runtime";
 declare export opaque type TodoList_viewer$ref: FragmentReference;
 export type TodoList_viewer = {|
@@ -15,7 +16,7 @@ export type TodoList_viewer = {|
     +edges: ?$ReadOnlyArray<{|
       +node: {|
         +id: string,
-        +text: ?string,
+        +$fragmentRefs: Todo_todo$ref,
       |}
     |}>
   |},
@@ -90,11 +91,9 @@ const node/*: ConcreteFragment*/ = {
                   "storageKey": null
                 },
                 {
-                  "kind": "ScalarField",
-                  "alias": null,
-                  "name": "text",
-                  "args": null,
-                  "storageKey": null
+                  "kind": "FragmentSpread",
+                  "name": "Todo_todo",
+                  "args": null
                 },
                 {
                   "kind": "ScalarField",
@@ -144,5 +143,5 @@ const node/*: ConcreteFragment*/ = {
   ]
 };
 // prettier-ignore
-(node/*: any*/).hash = 'f8de9a5295f543dc3d703a70913cb522';
+(node/*: any*/).hash = 'bcc3cd62f0cf4f3e37ada2471275468b';
 module.exports = node;

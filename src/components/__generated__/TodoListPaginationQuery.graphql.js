@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 0973da211312fbc106dc3c92a0e13fbf
+ * @relayHash a023f253731b343f293bd647113166ae
  */
 
 /* eslint-disable */
@@ -38,7 +38,7 @@ fragment TodoList_viewer_1G22uz on Viewer {
     edges {
       node {
         id
-        text
+        ...Todo_todo
         __typename
       }
       cursor
@@ -48,6 +48,12 @@ fragment TodoList_viewer_1G22uz on Viewer {
       hasNextPage
     }
   }
+}
+
+fragment Todo_todo on Todo {
+  id
+  complete
+  text
 }
 */
 
@@ -78,7 +84,7 @@ return {
   "operationKind": "query",
   "name": "TodoListPaginationQuery",
   "id": null,
-  "text": "query TodoListPaginationQuery(\n  $count: Int!\n  $cursor: String\n) {\n  viewer {\n    ...TodoList_viewer_1G22uz\n    id\n  }\n}\n\nfragment TodoList_viewer_1G22uz on Viewer {\n  listTodos(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        text\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n",
+  "text": "query TodoListPaginationQuery(\n  $count: Int!\n  $cursor: String\n) {\n  viewer {\n    ...TodoList_viewer_1G22uz\n    id\n  }\n}\n\nfragment TodoList_viewer_1G22uz on Viewer {\n  listTodos(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        ...Todo_todo\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment Todo_todo on Todo {\n  id\n  complete\n  text\n}\n",
   "metadata": {},
   "fragment": {
     "kind": "Fragment",
@@ -173,6 +179,13 @@ return {
                     "plural": false,
                     "selections": [
                       v1,
+                      {
+                        "kind": "ScalarField",
+                        "alias": null,
+                        "name": "complete",
+                        "args": null,
+                        "storageKey": null
+                      },
                       {
                         "kind": "ScalarField",
                         "alias": null,

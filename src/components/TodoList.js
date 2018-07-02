@@ -1,11 +1,10 @@
 import React from 'react';
 import {graphql, createPaginationContainer} from 'react-relay';
 import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import Checkbox from '@material-ui/core/Checkbox';
 import Typography from '@material-ui/core/Typography';
 import CircularProgress from '@material-ui/core/CircularProgress';
+
+import Todo from './Todo';
 
 
 class TodoList extends React.Component {
@@ -28,11 +27,7 @@ class TodoList extends React.Component {
       return <TodoStatus text="You don't have anything to do!"/>;
     } else {
       return (<List>
-              {edges.map((todo) => (
-                <ListItem key={todo.node.id}>
-                  <Checkbox/>
-                  <ListItemText>{todo.node.text}</ListItemText>
-                </ListItem>))}
+              {edges.map((edge) => <Todo key={edge.node.id} todo={edge.node}/>)}
               </List>);
     }
   }
@@ -50,7 +45,7 @@ export default createPaginationContainer(
         edges {
           node {
             id
-            text
+            ...Todo_todo
           }
         }
       }

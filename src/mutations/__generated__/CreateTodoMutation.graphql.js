@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 8b4d50ed556ac377075d314cf0fb0201
+ * @relayHash fe1899cb2df283469136884c53580ab1
  */
 
 /* eslint-disable */
@@ -10,8 +10,7 @@
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
 export type CreateTodoInput = {
-  text?: ?string,
-  complete?: ?boolean,
+  text: string,
   clientMutationId?: ?string,
 };
 export type CreateTodoMutationVariables = {|
@@ -97,7 +96,7 @@ return {
         "name": "createTodo",
         "storageKey": null,
         "args": v1,
-        "concreteType": "TodoPayload",
+        "concreteType": "CreateTodoPayload",
         "plural": false,
         "selections": [
           {
@@ -139,7 +138,7 @@ return {
         "name": "createTodo",
         "storageKey": null,
         "args": v1,
-        "concreteType": "TodoPayload",
+        "concreteType": "CreateTodoPayload",
         "plural": false,
         "selections": [
           {

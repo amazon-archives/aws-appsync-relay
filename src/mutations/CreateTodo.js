@@ -19,8 +19,7 @@ var tempId = 0;
 function createTodo(env, viewerId, text) {
   const variables = {
     input: {
-      text,
-      complete: false
+      text
     },
   };
   commitMutation(
@@ -50,7 +49,8 @@ function createTodo(env, viewerId, text) {
           rangeBehavior: 'prepend',
         }],
         edgeName: 'edge',
-      }]}
+      }]
+    }
   );
 }
 

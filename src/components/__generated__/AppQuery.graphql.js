@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash fd66f537fdcd1cbfb7c8e6fdb928bbad
+ * @relayHash 295ff2f4801cc5483252531294a1a247
  */
 
 /* eslint-disable */
@@ -37,7 +37,7 @@ fragment TodoList_viewer_yu5n1 on Viewer {
     edges {
       node {
         id
-        text
+        ...Todo_todo
         __typename
       }
       cursor
@@ -47,6 +47,12 @@ fragment TodoList_viewer_yu5n1 on Viewer {
       hasNextPage
     }
   }
+}
+
+fragment Todo_todo on Todo {
+  id
+  complete
+  text
 }
 */
 
@@ -71,7 +77,7 @@ return {
   "operationKind": "query",
   "name": "AppQuery",
   "id": null,
-  "text": "query AppQuery(\n  $count: Int\n) {\n  viewer {\n    id\n    ...TodoList_viewer_yu5n1\n  }\n}\n\nfragment TodoList_viewer_yu5n1 on Viewer {\n  listTodos(first: $count) {\n    edges {\n      node {\n        id\n        text\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n",
+  "text": "query AppQuery(\n  $count: Int\n) {\n  viewer {\n    id\n    ...TodoList_viewer_yu5n1\n  }\n}\n\nfragment TodoList_viewer_yu5n1 on Viewer {\n  listTodos(first: $count) {\n    edges {\n      node {\n        id\n        ...Todo_todo\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment Todo_todo on Todo {\n  id\n  complete\n  text\n}\n",
   "metadata": {},
   "fragment": {
     "kind": "Fragment",
@@ -156,6 +162,13 @@ return {
                     "plural": false,
                     "selections": [
                       v1,
+                      {
+                        "kind": "ScalarField",
+                        "alias": null,
+                        "name": "complete",
+                        "args": null,
+                        "storageKey": null
+                      },
                       {
                         "kind": "ScalarField",
                         "alias": null,

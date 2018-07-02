@@ -145,6 +145,15 @@ Resources:
       DataSourceName: !GetAtt DynamoSource.Name
       RequestMappingTemplateS3Location: {{Create.request.mapping}}
       ResponseMappingTemplateS3Location: {{Create.response.mapping}}
+  UpdateTodoResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      TypeName: Mutation
+      FieldName: updateTodo
+      DataSourceName: !GetAtt DynamoSource.Name
+      RequestMappingTemplateS3Location: {{Update.request.mapping}}
+      ResponseMappingTemplateS3Location: {{Update.response.mapping}}
   HttpEndpoint:
     Type: AWS::Serverless::Function
     Properties:
