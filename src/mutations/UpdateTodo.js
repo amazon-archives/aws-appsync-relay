@@ -12,10 +12,10 @@ const updateMutation = graphql`
   }
 `;
 
-function updateTodo(env, id, complete) {
+function updateTodo(env, todo, complete) {
   const variables = {
     input: {
-      id,
+      id: todo.id,
       complete
     },
   };
@@ -30,7 +30,7 @@ function updateTodo(env, id, complete) {
       optimisticResponse: {
         updateTodo: {
           node: {
-            id,
+            id: todo.id,
             complete
           }
         }

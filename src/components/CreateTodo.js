@@ -1,4 +1,5 @@
 import React from 'react';
+import {graphql, createFragmentContainer} from 'react-relay';
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
@@ -7,8 +8,10 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import Grid from '@material-ui/core/Grid';
 
+import {createTodo} from '../mutations/CreateTodo';
 
-export default class CreateTodo extends React.Component {
+
+class CreateTodo extends React.Component {
   constructor(props) {
     super(props);
     this.state = {newTodo: ''};
@@ -19,12 +22,12 @@ export default class CreateTodo extends React.Component {
   }
 
   onSubmit(event) {
-    if (this.state.newTodo) {
-      this.props.onAdd(this.state.newTodo);
-      this.setState({newTodo: ''});
-    }
     // `return false` doesn't work in React
     event.preventDefault();
+    if (this.state.newTodo) {
+      createTodo(this.props.relay.environment, this.props.viewer, this.state.newTodo);
+      this.setState({newTodo: ''});
+    }
   }
 
   render() {
@@ -49,3 +52,11 @@ export default class CreateTodo extends React.Component {
       </form>);
   }
 }
+
+export default createFragmentContainer(
+  CreateTodo,
+  graphql`
+  fragment CreateTodo_viewer on Viewer {
+    id
+  }
+`);

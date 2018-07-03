@@ -9,7 +9,7 @@ import {updateTodo} from '../mutations/UpdateTodo';
 
 class Todo extends React.Component {
   onChange(event) {
-    updateTodo(this.props.relay.environment, this.props.todo.id, event.target.checked);
+    updateTodo(this.props.relay.environment, this.props.todo, event.target.checked);
   }
 
   render() {
@@ -35,5 +35,4 @@ export default createFragmentContainer(
     complete
     text
   }
-`
-);
+`);

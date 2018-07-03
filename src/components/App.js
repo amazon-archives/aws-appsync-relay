@@ -7,7 +7,6 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Paper from '@material-ui/core/Paper';
 
 import CreateTodo from './CreateTodo';
-import {createTodo} from '../mutations/CreateTodo';
 import TodoList from './TodoList';
 import environment from '../environment';
 
@@ -35,15 +34,14 @@ export default class App extends React.Component {
                            ...TodoList_viewer @arguments(count: $count)
                          }
                        }`}
-                render={({error, props}) => (
-                  <React.Fragment>
-                    <CreateTodo onAdd={(text) => createTodo(environment, props.viewer.id, text)} />
-                    <TodoList viewer={props && props.viewer} error={error}/>
-                  </React.Fragment>)}
-                />
-        </Paper>
+                render={({error, props}) => {
+                  let viewer = props && props.viewer;
+                  return (<React.Fragment>
+                            <CreateTodo viewer={viewer} />
+                            <TodoList viewer={viewer} error={error} />
+                          </React.Fragment>);}} />
+          </Paper>
         </div>
-      </React.Fragment>
-    );
+      </React.Fragment>);
   }
 }

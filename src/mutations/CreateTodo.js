@@ -16,7 +16,7 @@ const createMutation = graphql`
 `;
 
 var tempId = 0;
-function createTodo(env, viewerId, text) {
+function createTodo(env, viewer, text) {
   const variables = {
     input: {
       text
@@ -43,7 +43,7 @@ function createTodo(env, viewerId, text) {
       },
       configs: [{
         type: 'RANGE_ADD',
-        parentID: viewerId,
+        parentID: viewer.id,
         connectionInfo: [{
           key: 'TodoList_listTodos',
           rangeBehavior: 'prepend',
