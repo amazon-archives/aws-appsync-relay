@@ -1,5 +1,6 @@
 import React from 'react';
 import {graphql, createPaginationContainer, requestSubscription} from 'react-relay';
+import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -30,6 +31,22 @@ class TodoList extends React.Component {
                         });
   }
 
+  loadMore() {
+    if (!this.props.relay.hasMore() || this.props.relay.isLoading()) {
+      return;
+    }
+
+    this.props.relay.loadMore(
+      5,
+      (error = null) => {
+        if (error) {
+          console.error('Network Error', 'Unable to connect to the network.');
+        }
+      },
+    );
+  }
+
+
   render() {
     let TodoStatus = (props) => {
       return (<div style={{display: 'flex', justifyContent: 'center', padding: '20px'}}>
@@ -48,9 +65,15 @@ class TodoList extends React.Component {
     if (edges.length === 0) {
       return <TodoStatus text="You don't have anything to do!"/>;
     } else {
-      return (<List>
-              {edges.map((edge) => <Todo key={edge.node.id} todo={edge.node}/>)}
-              </List>);
+      return (<React.Fragment>
+                <List>
+                  {edges.map((edge) => <Todo key={edge.node.id} todo={edge.node}/>)}
+                </List>
+                {this.props.relay.hasMore() &&
+                  <div style={{display: 'flex', justifyContent: 'center', padding: '0 20px 20px 20px'}}>
+                    <Button color="secondary" onClick={this.loadMore.bind(this)}>Load More</Button>
+                  </div>}
+              </React.Fragment>);
     }
   }
 }
