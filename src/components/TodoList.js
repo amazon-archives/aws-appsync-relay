@@ -24,8 +24,9 @@ class TodoList extends React.Component {
     requestSubscription(this.props.relay.environment,
                         {
                           subscription: updateSubscription,
-                          onCompleted: () => console.log('Subscription closed.'),
-                          onError: (err) => alert('Error subscribing to todo updates.')
+                          onCompleted: () => console.log('Update subscription closed.'),
+                          onNext: resp => console.log('Update event:', resp),
+                          onError: err => console.error('Error subscribing to todo updates:', err)
                         });
   }
 

@@ -1,5 +1,6 @@
 import React from 'react';
-import {graphql, createFragmentContainer} from 'react-relay';
+import {graphql, commitMutation, createFragmentContainer, requestSubscription} from 'react-relay';
+import {ConnectionHandler} from 'relay-runtime';
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
@@ -8,13 +9,116 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import Grid from '@material-ui/core/Grid';
 
-import {createTodo} from '../mutations/CreateTodo';
+
+// The default `RANGE_ADD` updater almost works,
+// but it would create duplicate entries for
+// local creations and corresponding subscription updates.
+function makeUpdater(viewer, rootField) {
+  return (store) => {
+    let serverEdge = store.getRootField(rootField).getLinkedRecord('edge');
+    let getEdgeId = (edge) => edge.getLinkedRecord('node').getValue('id');
+    // Check if the todo is already in the list
+    // (Checking with `store.get` is insufficient, because the new record is already in the store)
+    let newId = getEdgeId(serverEdge);
+    let viewerProxy = store.get(viewer.id);
+    let conn = ConnectionHandler.getConnection(viewerProxy, 'TodoList_listTodos');
+    if (!conn.getLinkedRecords('edges').filter((edge) => getEdgeId(edge) === newId).length) {
+      // Only add the new edge if it's not there yet
+      // Need to make a new edge record because passing the one from the payload directly
+      // can cause duplicate references to the same record in the store
+      let newEdge = ConnectionHandler.createEdge(store, conn, serverEdge.getLinkedRecord('node'), 'TodoEdge');
+      ConnectionHandler.insertEdgeBefore(conn, newEdge);
+    }
+  };
+}
+
+
+const createMutation = graphql`
+  mutation CreateTodoMutation(
+    $input: CreateTodoInput!
+  ) {
+    createTodo(input: $input) {
+      edge {
+        node {
+          complete
+          text
+        }
+      }
+    }
+  }
+`;
+
+
+var tempId = 0;
+function createTodo(env, viewer, text) {
+  const variables = {
+    input: {
+      text
+    },
+  };
+  let updater = makeUpdater(viewer, 'createTodo');
+  commitMutation(
+    env,
+    {
+      mutation: createMutation,
+      variables,
+      onCompleted: resp => console.log('Creation response:', resp),
+      onError: err => console.error('Creation error:', err),
+      optimisticResponse: {
+        createTodo: {
+          edge: {
+            node: {
+              id: 'Todo' + tempId++,
+              complete: false,
+              text: text
+            }
+          }
+        }
+      },
+      updater,
+      optimisticUpdater: updater
+    }
+  );
+}
+
+
+const createSubscription = graphql`
+  subscription CreateTodoSubscription {
+    createdTodo {
+      edge {
+        node {
+          text
+          complete
+        }
+      }
+    }
+  }
+`;
+
+
+function subscribeToCreates(env, viewer) {
+  return requestSubscription(env,
+                             {
+                               subscription: createSubscription,
+                               onCompleted: () => console.log('Create subscription closed.'),
+                               onError: err => console.error('Error subscribing to todo updates:', err),
+                               onNext: resp => console.log('Create event:', resp),
+                               updater: makeUpdater(viewer, 'createdTodo')
+                             });
+}
 
 
 class CreateTodo extends React.Component {
   constructor(props) {
     super(props);
     this.state = {newTodo: ''};
+    this.subscription = null;
+  }
+
+  componentDidUpdate() {
+    if (this.props && !this.subscription) {
+      this.subscription = subscribeToCreates(this.props.relay.environment, this.props.viewer);
+    }
   }
 
   onChange(event) {
@@ -22,7 +126,7 @@ class CreateTodo extends React.Component {
   }
 
   onSubmit(event) {
-    // `return false` doesn't work in React
+    // returning false doesn't work in React's onSubmit
     event.preventDefault();
     if (this.state.newTodo) {
       createTodo(this.props.relay.environment, this.props.viewer, this.state.newTodo);
@@ -52,6 +156,7 @@ class CreateTodo extends React.Component {
       </form>);
   }
 }
+
 
 export default createFragmentContainer(
   CreateTodo,

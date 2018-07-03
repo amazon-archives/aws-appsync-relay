@@ -1,10 +1,48 @@
 import React from 'react';
-import {graphql, createFragmentContainer} from 'react-relay';
+import {graphql, commitMutation, createFragmentContainer} from 'react-relay';
 import Checkbox from '@material-ui/core/Checkbox';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 
-import {updateTodo} from '../mutations/UpdateTodo';
+
+const updateMutation = graphql`
+  mutation TodoMutation(
+    $input: UpdateTodoInput!
+  ) {
+    updateTodo(input: $input) {
+      node {
+        complete
+      }
+    }
+  }
+`;
+
+
+function updateTodo(env, todo, complete) {
+  const variables = {
+    input: {
+      id: todo.id,
+      complete
+    },
+  };
+  commitMutation(
+    env,
+    {
+      mutation: updateMutation,
+      variables,
+      onCompleted: resp => console.log('Update response:', resp),
+      onError: err => console.error('Update error:', err),
+      optimisticResponse: {
+        updateTodo: {
+          node: {
+            id: todo.id,
+            complete
+          }
+        }
+      }
+    }
+  );
+}
 
 
 class Todo extends React.Component {

@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 6de08581fd3d756f0f2426c3c316daef
+ * @relayHash f1756695b1baa53499d79f41f7b11597
  */
 
 /* eslint-disable */
@@ -14,10 +14,10 @@ export type UpdateTodoInput = {
   complete?: ?boolean,
   clientMutationId?: ?string,
 };
-export type UpdateTodoMutationVariables = {|
+export type TodoMutationVariables = {|
   input: UpdateTodoInput
 |};
-export type UpdateTodoMutationResponse = {|
+export type TodoMutationResponse = {|
   +updateTodo: {|
     +node: ?{|
       +complete: boolean
@@ -28,7 +28,7 @@ export type UpdateTodoMutationResponse = {|
 
 
 /*
-mutation UpdateTodoMutation(
+mutation TodoMutation(
   $input: UpdateTodoInput!
 ) {
   updateTodo(input: $input) {
@@ -67,13 +67,13 @@ v2 = {
 return {
   "kind": "Request",
   "operationKind": "mutation",
-  "name": "UpdateTodoMutation",
+  "name": "TodoMutation",
   "id": null,
-  "text": "mutation UpdateTodoMutation(\n  $input: UpdateTodoInput!\n) {\n  updateTodo(input: $input) {\n    node {\n      complete\n      id\n    }\n  }\n}\n",
+  "text": "mutation TodoMutation(\n  $input: UpdateTodoInput!\n) {\n  updateTodo(input: $input) {\n    node {\n      complete\n      id\n    }\n  }\n}\n",
   "metadata": {},
   "fragment": {
     "kind": "Fragment",
-    "name": "UpdateTodoMutation",
+    "name": "TodoMutation",
     "type": "Mutation",
     "metadata": null,
     "argumentDefinitions": v0,
@@ -105,7 +105,7 @@ return {
   },
   "operation": {
     "kind": "Operation",
-    "name": "UpdateTodoMutation",
+    "name": "TodoMutation",
     "argumentDefinitions": v0,
     "selections": [
       {
@@ -143,5 +143,5 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'f335abbbbed755ec438b65049a5794f9';
+(node/*: any*/).hash = '9d8e3b97ccf6938322f1328d5e45b159';
 module.exports = node;
