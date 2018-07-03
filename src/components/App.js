@@ -31,6 +31,7 @@ export default class App extends React.Component {
                        query AppQuery($count: Int) {
                          viewer {
                            id
+                           ...CreateTodo_viewer
                            ...TodoList_viewer @arguments(count: $count)
                          }
                        }`}

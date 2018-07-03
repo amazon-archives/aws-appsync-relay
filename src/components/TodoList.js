@@ -1,5 +1,5 @@
 import React from 'react';
-import {graphql, createPaginationContainer} from 'react-relay';
+import {graphql, createPaginationContainer, requestSubscription} from 'react-relay';
 import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -7,7 +7,28 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Todo from './Todo';
 
 
+const updateSubscription = graphql`
+  subscription TodoListUpdateSubscription {
+    updatedTodo {
+      node {
+        complete
+      }
+    }
+  }
+`;
+
+
 class TodoList extends React.Component {
+  constructor(props) {
+    super(props);
+    requestSubscription(this.props.relay.environment,
+                        {
+                          subscription: updateSubscription,
+                          onCompleted: () => console.log('Subscription closed.'),
+                          onError: (err) => alert('Error subscribing to todo updates.')
+                        });
+  }
+
   render() {
     let TodoStatus = (props) => {
       return (<div style={{display: 'flex', justifyContent: 'center', padding: '20px'}}>
@@ -49,8 +70,7 @@ export default createPaginationContainer(
           }
         }
       }
-    }
-  `,
+    }`,
   {
     direction: 'forward',
     getVariables(props, {count, cursor}, fragmentVariables) {
@@ -67,7 +87,6 @@ export default createPaginationContainer(
           viewer {
             ...TodoList_viewer @arguments(count: $count, cursor: $cursor)
           }
-      }
-    `
+      }`
   }
 );

@@ -65,7 +65,15 @@ type Mutation {
   updateTodo(input: UpdateTodoInput!): UpdateTodoPayload!
 }
 
+type Subscription {
+  createdTodo: CreateTodoPayload
+  @aws_subscribe(mutations: ["createTodo"])
+  updatedTodo: UpdateTodoPayload
+  @aws_subscribe(mutations: ["updateTodo"])
+}
+
 schema {
   query: Query
   mutation: Mutation
+  subscription: Subscription
 }

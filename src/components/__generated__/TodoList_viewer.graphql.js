@@ -15,7 +15,7 @@ export type TodoList_viewer = {|
   +listTodos: {|
     +edges: ?$ReadOnlyArray<{|
       +node: {|
-        +id: string,
+        +id: ?string,
         +$fragmentRefs: Todo_todo$ref,
       |}
     |}>
