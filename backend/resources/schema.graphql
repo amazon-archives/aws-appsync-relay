@@ -6,14 +6,14 @@ type PageInfo {
 }
 
 interface Node {
-  id: ID!
+  id: ID
 }
 
 type Todo implements Node {
-  id: ID!
+  id: ID
   userId: ID!
   createdAt: String!
-  text: String
+  text: String!
   complete: Boolean!
 }
 
@@ -51,7 +51,7 @@ type UpdateTodoPayload {
 }
 
 type Viewer implements Node {
-  id: ID!
+  id: ID
   listTodos(after: String, first: Int): TodoConnection!
 }
 
