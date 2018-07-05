@@ -165,9 +165,9 @@ Resources:
           APPSYNC_CONFIG: !Sub |
 
             {
-              "Endpoint": "${GraphQLApi.GraphQLUrl}",
-              "Key": "${GraphQLApiKey.ApiKey}",
-              "Region": "${AWS::Region}"
+              "AppSyncEndpoint": "${GraphQLApi.GraphQLUrl}",
+              "AppSyncKey": "${GraphQLApiKey.ApiKey}",
+              "AppSyncRegion": "${AWS::Region}"
             }
 
           BUNDLE_URL: {{bundle.js}}
@@ -185,5 +185,5 @@ Outputs:
     Value: !GetAtt GraphQLApi.GraphQLUrl
   AppSyncKey:
     Value: !GetAtt GraphQLApiKey.ApiKey
-  Region:
+  AppSyncRegion:
     Value: !Ref AWS::Region
