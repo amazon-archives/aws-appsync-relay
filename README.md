@@ -25,5 +25,3 @@ Then run:
 npm run build
 script/deploy
 ```
-
-```
