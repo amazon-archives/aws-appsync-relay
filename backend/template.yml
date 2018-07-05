@@ -134,8 +134,8 @@ Resources:
       TypeName: Viewer
       FieldName: listTodos
       DataSourceName: !GetAtt DynamoSource.Name
-      RequestMappingTemplateS3Location: {{Viewer.listTodos.request.mapping}}
-      ResponseMappingTemplateS3Location: {{Connection.response.mapping}}
+      RequestMappingTemplateS3Location: {{List.request.mapping}}
+      ResponseMappingTemplateS3Location: {{List.response.mapping}}
   CreateTodoResolver:
     Type: AWS::AppSync::Resolver
     Properties:
@@ -178,9 +178,12 @@ Resources:
             Path: /
             Method: GET
 Outputs:
-  Endpoint:
+  AppURL:
+    Description: "Access the sample app here!"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+  AppSyncEndpoint:
     Value: !GetAtt GraphQLApi.GraphQLUrl
-  Key:
+  AppSyncKey:
     Value: !GetAtt GraphQLApiKey.ApiKey
   Region:
     Value: !Ref AWS::Region

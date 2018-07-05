@@ -8,8 +8,8 @@ const AC = APPSYNC_CONFIG;
 
 Analytics.configure({disabled: true});
 Amplify.configure({
-  aws_appsync_graphqlEndpoint: AC.Endpoint,
-  aws_appsync_apiKey: AC.Key,
+  aws_appsync_graphqlEndpoint: AC.AppSyncEndpoint,
+  aws_appsync_apiKey: AC.AppSyncKey,
   aws_appsync_region: AC.Region,
   aws_appsync_authenticationType: 'API_KEY'
 });

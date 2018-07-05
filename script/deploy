@@ -1,6 +1,6 @@
 #! /bin/bash
 
-set -e
+set -eu
 
 project_root="$(dirname $BASH_SOURCE)/.."
 source "$project_root/script/source"
@@ -42,6 +42,10 @@ aws s3 sync "$project_root/dist" "s3://$S3_BUCKET/dist" --acl public-read
 bundle_name=$(basename "$project_root/dist/"bundle.*.js)
 sed-inline "s_{{bundle.js}}_//${S3_BUCKET}.s3.amazonaws.com/dist/${bundle_name}_" "$tmp_dir/template.yml"
 
+echo "Updating public template..."
+aws s3 cp "$tmp_dir/template.yml" "s3://${S3_BUCKET}${TEMPLATE_PATH}"
+echo "Template can be launched from:"
+echo "https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=AppSyncRelay&templateURL=https://s3.amazonaws.com/${S3_BUCKET}${TEMPLATE_PATH}"
 
 echo "Updating stack..."
 aws cloudformation deploy --stack-name "$STACK_NAME" --template-file "$tmp_dir/template.yml" \
