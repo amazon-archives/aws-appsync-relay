@@ -43,7 +43,7 @@ bundle_name=$(basename "$project_root/dist/"bundle.*.js)
 sed-inline "s_{{bundle.js}}_//${S3_BUCKET}.s3.amazonaws.com/dist/${bundle_name}_" "$tmp_dir/template.yml"
 
 echo "Updating public template..."
-aws s3 cp "$tmp_dir/template.yml" "s3://${S3_BUCKET}${TEMPLATE_PATH}"
+aws s3 cp "$tmp_dir/template.yml" "s3://${S3_BUCKET}${TEMPLATE_PATH}" --acl public-read
 echo "Template can be launched from:"
 echo "https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=AppSyncRelay&templateURL=https://s3.amazonaws.com/${S3_BUCKET}${TEMPLATE_PATH}"
 
