@@ -2,6 +2,15 @@
 AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
 Resources:
+  UserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      AutoVerifiedAttributes:
+        - email
+  Client:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId: !Ref UserPool
   AppsyncLogRole:
     Type: AWS::IAM::Role
     Properties:
@@ -29,14 +38,14 @@ Resources:
     Type: AWS::AppSync::GraphQLApi
     Properties:
       Name: !Sub ${AWS::StackName}_api
-      AuthenticationType: API_KEY
+      AuthenticationType: AMAZON_COGNITO_USER_POOLS
       LogConfig:
         CloudWatchLogsRoleArn: !GetAtt AppsyncLogRole.Arn
         FieldLogLevel: ALL
-  GraphQLApiKey:
-    Type: AWS::AppSync::ApiKey
-    Properties:
-      ApiId: !GetAtt GraphQLApi.ApiId
+      UserPoolConfig:
+        UserPoolId: !Ref UserPool
+        AwsRegion: !Ref AWS::Region
+        DefaultAction: ALLOW
   GraphQLSchema:
     Type: AWS::AppSync::GraphQLSchema
     Properties:
@@ -166,8 +175,9 @@ Resources:
 
             {
               "AppSyncEndpoint": "${GraphQLApi.GraphQLUrl}",
-              "AppSyncKey": "${GraphQLApiKey.ApiKey}",
-              "AppSyncRegion": "${AWS::Region}"
+              "AppSyncRegion": "${AWS::Region}",
+              "UserPool": "${UserPool}",
+              "ClientId": "${Client}"
             }
 
           BUNDLE_URL: {{bundle.js}}
@@ -183,7 +193,9 @@ Outputs:
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
   AppSyncEndpoint:
     Value: !GetAtt GraphQLApi.GraphQLUrl
-  AppSyncKey:
-    Value: !GetAtt GraphQLApiKey.ApiKey
   AppSyncRegion:
     Value: !Ref AWS::Region
+  UserPool:
+    Value: !Ref UserPool
+  ClientId:
+    Value: !Ref Client

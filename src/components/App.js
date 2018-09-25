@@ -1,4 +1,5 @@
 import React from 'react';
+import { withAuthenticator } from 'aws-amplify-react';
 import { QueryRenderer, graphql } from 'react-relay';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -10,7 +11,7 @@ import CreateTodo from './CreateTodo';
 import TodoList from './TodoList';
 import environment from '../environment';
 
-export default class App extends React.Component {
+class App extends React.Component {
   render() {
     return (
       <React.Fragment>
@@ -46,3 +47,5 @@ export default class App extends React.Component {
       </React.Fragment>);
   }
 }
+
+export default withAuthenticator(App);
