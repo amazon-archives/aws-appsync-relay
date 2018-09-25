@@ -7,6 +7,7 @@ Resources:
     Properties:
       AutoVerifiedAttributes:
         - email
+      UserPoolName: !Sub ${AWS::StackName}_user_pool
   Client:
     Type: AWS::Cognito::UserPoolClient
     Properties:
@@ -134,8 +135,12 @@ Resources:
       TypeName: Query
       FieldName: viewer
       DataSourceName: !GetAtt LocalSource.Name
-      RequestMappingTemplateS3Location: {{Empty.request.mapping}}
-      ResponseMappingTemplate: '{"id": "0"}'
+      RequestMappingTemplate: |
+        {
+          "version": "2017-02-28",
+          "payload": {}
+        }
+      ResponseMappingTemplate: '{"id": "$context.identity.sub"}'
   ListTodosResolver:
     Type: AWS::AppSync::Resolver
     Properties:
@@ -163,6 +168,44 @@ Resources:
       DataSourceName: !GetAtt DynamoSource.Name
       RequestMappingTemplateS3Location: {{Update.request.mapping}}
       ResponseMappingTemplateS3Location: {{Update.response.mapping}}
+  CreatedResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      TypeName: Subscription
+      FieldName: createdTodo
+      DataSourceName: !GetAtt LocalSource.Name
+      RequestMappingTemplate: |
+        {
+          "version": "2017-02-28",
+          "payload": {}
+        }
+      ResponseMappingTemplate: |
+        #if(${ctx.identity.sub} != ${ctx.arguments.userId})
+            $utils.unauthorized()
+        #else
+        ##User is authorized, but we return null to continue
+            null
+        #end
+  UpdatedResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      TypeName: Subscription
+      FieldName: updatedTodo
+      DataSourceName: !GetAtt LocalSource.Name
+      RequestMappingTemplate: |
+        {
+          "version": "2017-02-28",
+          "payload": {}
+        }
+      ResponseMappingTemplate: |
+        #if(${ctx.identity.sub} != ${ctx.arguments.userId})
+            $utils.unauthorized()
+        #else
+        ##User is authorized, but we return null to continue
+            null
+        #end
   HttpEndpoint:
     Type: AWS::Serverless::Function
     Properties:

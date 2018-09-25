@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 626c83fbacd1e05ae300b5c2dd3f3e1f
+ * @relayHash cf7d4b01c32728d82525ed8752742742
  */
 
 /* eslint-disable */
@@ -9,7 +9,9 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type TodoListUpdateSubscriptionVariables = {||};
+export type TodoListUpdateSubscriptionVariables = {|
+  user: string
+|};
 export type TodoListUpdateSubscriptionResponse = {|
   +updatedTodo: ?{|
     +node: ?{|
@@ -17,12 +19,18 @@ export type TodoListUpdateSubscriptionResponse = {|
     |}
   |}
 |};
+export type TodoListUpdateSubscription = {|
+  variables: TodoListUpdateSubscriptionVariables,
+  response: TodoListUpdateSubscriptionResponse,
+|};
 */
 
 
 /*
-subscription TodoListUpdateSubscription {
-  updatedTodo {
+subscription TodoListUpdateSubscription(
+  $user: ID!
+) {
+  updatedTodo(userId: $user) {
     node {
       complete
       id
@@ -32,7 +40,23 @@ subscription TodoListUpdateSubscription {
 */
 
 const node/*: ConcreteRequest*/ = (function(){
-var v0 = {
+var v0 = [
+  {
+    "kind": "LocalArgument",
+    "name": "user",
+    "type": "ID!",
+    "defaultValue": null
+  }
+],
+v1 = [
+  {
+    "kind": "Variable",
+    "name": "userId",
+    "variableName": "user",
+    "type": "ID!"
+  }
+],
+v2 = {
   "kind": "ScalarField",
   "alias": null,
   "name": "complete",
@@ -44,21 +68,21 @@ return {
   "operationKind": "subscription",
   "name": "TodoListUpdateSubscription",
   "id": null,
-  "text": "subscription TodoListUpdateSubscription {\n  updatedTodo {\n    node {\n      complete\n      id\n    }\n  }\n}\n",
+  "text": "subscription TodoListUpdateSubscription(\n  $user: ID!\n) {\n  updatedTodo(userId: $user) {\n    node {\n      complete\n      id\n    }\n  }\n}\n",
   "metadata": {},
   "fragment": {
     "kind": "Fragment",
     "name": "TodoListUpdateSubscription",
     "type": "Subscription",
     "metadata": null,
-    "argumentDefinitions": [],
+    "argumentDefinitions": v0,
     "selections": [
       {
         "kind": "LinkedField",
         "alias": null,
         "name": "updatedTodo",
         "storageKey": null,
-        "args": null,
+        "args": v1,
         "concreteType": "UpdateTodoPayload",
         "plural": false,
         "selections": [
@@ -71,7 +95,7 @@ return {
             "concreteType": "Todo",
             "plural": false,
             "selections": [
-              v0
+              v2
             ]
           }
         ]
@@ -81,14 +105,14 @@ return {
   "operation": {
     "kind": "Operation",
     "name": "TodoListUpdateSubscription",
-    "argumentDefinitions": [],
+    "argumentDefinitions": v0,
     "selections": [
       {
         "kind": "LinkedField",
         "alias": null,
         "name": "updatedTodo",
         "storageKey": null,
-        "args": null,
+        "args": v1,
         "concreteType": "UpdateTodoPayload",
         "plural": false,
         "selections": [
@@ -101,7 +125,7 @@ return {
             "concreteType": "Todo",
             "plural": false,
             "selections": [
-              v0,
+              v2,
               {
                 "kind": "ScalarField",
                 "alias": null,
@@ -118,5 +142,5 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '82e6911031c1d67a4e198d60575fd94c';
+(node/*: any*/).hash = 'e9163b88adf21364a4289c3ff06a6610';
 module.exports = node;

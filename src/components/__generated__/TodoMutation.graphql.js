@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash f1756695b1baa53499d79f41f7b11597
+ * @relayHash 89532f62b849938581fbcbf10cfd265e
  */
 
 /* eslint-disable */
@@ -21,8 +21,13 @@ export type TodoMutationResponse = {|
   +updateTodo: {|
     +node: ?{|
       +complete: boolean
-    |}
+    |},
+    +userId: string,
   |}
+|};
+export type TodoMutation = {|
+  variables: TodoMutationVariables,
+  response: TodoMutationResponse,
 |};
 */
 
@@ -36,6 +41,7 @@ mutation TodoMutation(
       complete
       id
     }
+    userId
   }
 }
 */
@@ -63,13 +69,20 @@ v2 = {
   "name": "complete",
   "args": null,
   "storageKey": null
+},
+v3 = {
+  "kind": "ScalarField",
+  "alias": null,
+  "name": "userId",
+  "args": null,
+  "storageKey": null
 };
 return {
   "kind": "Request",
   "operationKind": "mutation",
   "name": "TodoMutation",
   "id": null,
-  "text": "mutation TodoMutation(\n  $input: UpdateTodoInput!\n) {\n  updateTodo(input: $input) {\n    node {\n      complete\n      id\n    }\n  }\n}\n",
+  "text": "mutation TodoMutation(\n  $input: UpdateTodoInput!\n) {\n  updateTodo(input: $input) {\n    node {\n      complete\n      id\n    }\n    userId\n  }\n}\n",
   "metadata": {},
   "fragment": {
     "kind": "Fragment",
@@ -98,7 +111,8 @@ return {
             "selections": [
               v2
             ]
-          }
+          },
+          v3
         ]
       }
     ]
@@ -135,7 +149,8 @@ return {
                 "storageKey": null
               }
             ]
-          }
+          },
+          v3
         ]
       }
     ]
@@ -143,5 +158,5 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '9d8e3b97ccf6938322f1328d5e45b159';
+(node/*: any*/).hash = 'a3d2cdca615578f4575d4f24cbedace7';
 module.exports = node;

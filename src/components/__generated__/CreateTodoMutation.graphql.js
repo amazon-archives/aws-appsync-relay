@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash dbb79265f694f7757788554e80c85043
+ * @relayHash 2d03e20fedd020fd056972f1c4e2904f
  */
 
 /* eslint-disable */
@@ -23,8 +23,13 @@ export type CreateTodoMutationResponse = {|
         +complete: boolean,
         +text: string,
       |}
-    |}
+    |},
+    +userId: string,
   |}
+|};
+export type CreateTodoMutation = {|
+  variables: CreateTodoMutationVariables,
+  response: CreateTodoMutationResponse,
 |};
 */
 
@@ -41,6 +46,7 @@ mutation CreateTodoMutation(
         id
       }
     }
+    userId
   }
 }
 */
@@ -75,13 +81,20 @@ v3 = {
   "name": "text",
   "args": null,
   "storageKey": null
+},
+v4 = {
+  "kind": "ScalarField",
+  "alias": null,
+  "name": "userId",
+  "args": null,
+  "storageKey": null
 };
 return {
   "kind": "Request",
   "operationKind": "mutation",
   "name": "CreateTodoMutation",
   "id": null,
-  "text": "mutation CreateTodoMutation(\n  $input: CreateTodoInput!\n) {\n  createTodo(input: $input) {\n    edge {\n      node {\n        complete\n        text\n        id\n      }\n    }\n  }\n}\n",
+  "text": "mutation CreateTodoMutation(\n  $input: CreateTodoInput!\n) {\n  createTodo(input: $input) {\n    edge {\n      node {\n        complete\n        text\n        id\n      }\n    }\n    userId\n  }\n}\n",
   "metadata": {},
   "fragment": {
     "kind": "Fragment",
@@ -122,7 +135,8 @@ return {
                 ]
               }
             ]
-          }
+          },
+          v4
         ]
       }
     ]
@@ -171,7 +185,8 @@ return {
                 ]
               }
             ]
-          }
+          },
+          v4
         ]
       }
     ]
@@ -179,5 +194,5 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '3b0c36c66e4cd1a6afe6fc3c47c20bbd';
+(node/*: any*/).hash = '4634d2390811c36de4232fe3806cb075';
 module.exports = node;

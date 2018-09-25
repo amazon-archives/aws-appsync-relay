@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 6646d030493decf50cbe023e7c217899
+ * @relayHash 25654e194bb55b72ae12d05a47bc23bc
  */
 
 /* eslint-disable */
@@ -19,6 +19,10 @@ export type AppQueryResponse = {|
     +id: ?string,
     +$fragmentRefs: CreateTodo_viewer$ref & TodoList_viewer$ref,
   |}
+|};
+export type AppQuery = {|
+  variables: AppQueryVariables,
+  response: AppQueryResponse,
 |};
 */
 
@@ -39,6 +43,7 @@ fragment CreateTodo_viewer on Viewer {
 }
 
 fragment TodoList_viewer_yu5n1 on Viewer {
+  id
   listTodos(first: $count) {
     edges {
       node {
@@ -77,13 +82,21 @@ v1 = {
   "name": "id",
   "args": null,
   "storageKey": null
-};
+},
+v2 = [
+  {
+    "kind": "Variable",
+    "name": "first",
+    "variableName": "count",
+    "type": "Int"
+  }
+];
 return {
   "kind": "Request",
   "operationKind": "query",
   "name": "AppQuery",
   "id": null,
-  "text": "query AppQuery(\n  $count: Int\n) {\n  viewer {\n    id\n    ...CreateTodo_viewer\n    ...TodoList_viewer_yu5n1\n  }\n}\n\nfragment CreateTodo_viewer on Viewer {\n  id\n}\n\nfragment TodoList_viewer_yu5n1 on Viewer {\n  listTodos(first: $count) {\n    edges {\n      node {\n        id\n        ...Todo_todo\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment Todo_todo on Todo {\n  id\n  complete\n  text\n}\n",
+  "text": "query AppQuery(\n  $count: Int\n) {\n  viewer {\n    id\n    ...CreateTodo_viewer\n    ...TodoList_viewer_yu5n1\n  }\n}\n\nfragment CreateTodo_viewer on Viewer {\n  id\n}\n\nfragment TodoList_viewer_yu5n1 on Viewer {\n  id\n  listTodos(first: $count) {\n    edges {\n      node {\n        id\n        ...Todo_todo\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment Todo_todo on Todo {\n  id\n  complete\n  text\n}\n",
   "metadata": {},
   "fragment": {
     "kind": "Fragment",
@@ -143,14 +156,7 @@ return {
             "alias": null,
             "name": "listTodos",
             "storageKey": null,
-            "args": [
-              {
-                "kind": "Variable",
-                "name": "first",
-                "variableName": "count",
-                "type": "Int"
-              }
-            ],
+            "args": v2,
             "concreteType": "TodoConnection",
             "plural": false,
             "selections": [
@@ -236,14 +242,7 @@ return {
             "kind": "LinkedHandle",
             "alias": null,
             "name": "listTodos",
-            "args": [
-              {
-                "kind": "Variable",
-                "name": "first",
-                "variableName": "count",
-                "type": "Int"
-              }
-            ],
+            "args": v2,
             "handle": "connection",
             "key": "TodoList_listTodos",
             "filters": null

@@ -13,6 +13,7 @@ const updateMutation = graphql`
       node {
         complete
       }
+      userId
     }
   }
 `;

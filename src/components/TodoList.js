@@ -9,8 +9,8 @@ import Todo from './Todo';
 
 
 const updateSubscription = graphql`
-  subscription TodoListUpdateSubscription {
-    updatedTodo {
+  subscription TodoListUpdateSubscription($user: ID!) {
+    updatedTodo(userId: $user) {
       node {
         complete
       }
@@ -22,13 +22,20 @@ const updateSubscription = graphql`
 class TodoList extends React.Component {
   constructor(props) {
     super(props);
-    requestSubscription(this.props.relay.environment,
-                        {
-                          subscription: updateSubscription,
-                          onCompleted: () => console.log('Update subscription closed.'),
-                          onNext: resp => console.log('Update event:', resp),
-                          onError: err => console.error('Error subscribing to todo updates:', err)
-                        });
+    this.subscription = false;
+  }
+
+  componentDidUpdate() {
+    if (this.props && !this.subscription) {
+      this.subscription = requestSubscription(this.props.relay.environment,
+                          {
+                            subscription: updateSubscription,
+                            variables: {user: this.props.viewer.id},
+                            onCompleted: () => console.log('Update subscription closed.'),
+                            onNext: resp => console.log('Update event:', resp),
+                            onError: err => console.error('Error subscribing to todo updates:', err)
+                          });
+    }
   }
 
   loadMore() {
@@ -86,6 +93,7 @@ export default createPaginationContainer(
         count: {type: "Int"}
         cursor: {type: "String"}
     ) {
+      id
       listTodos(first: $count after: $cursor) @connection(key: "TodoList_listTodos") {
         edges {
           node {

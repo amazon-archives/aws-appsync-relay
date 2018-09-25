@@ -4,13 +4,12 @@
     "query" : {
         "expression" : "userId = :u",
         "expressionValues" : {
-            ## Just one global user for now
-            ":u" : {"S": "0"}
+            ":u" : {"S": "$context.identity.sub"}
         }
     },
     "index" : "CreatedAtIndex",
     "nextToken": #if($ctx.args.after) "$ctx.args.after" #else null #end,
-	"limit": #if($ctx.args.first) $ctx.args.first #else 10 #end,
+  	"limit": #if($ctx.args.first) $ctx.args.first #else 10 #end,
     "scanIndexForward" : false,
     "consistentRead" : false,
     "select" : "ALL_ATTRIBUTES",

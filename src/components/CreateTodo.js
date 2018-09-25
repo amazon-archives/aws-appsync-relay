@@ -44,6 +44,7 @@ const createMutation = graphql`
           text
         }
       }
+      userId
     }
   }
 `;
@@ -83,8 +84,8 @@ function createTodo(env, viewer, text) {
 
 
 const createSubscription = graphql`
-  subscription CreateTodoSubscription {
-    createdTodo {
+  subscription CreateTodoSubscription($user: ID!) {
+    createdTodo(userId: $user)  {
       edge {
         node {
           text
@@ -100,6 +101,7 @@ function subscribeToCreates(env, viewer) {
   return requestSubscription(env,
                              {
                                subscription: createSubscription,
+                               variables: {user: viewer.id},
                                onCompleted: () => console.log('Create subscription closed.'),
                                onError: err => console.error('Error subscribing to todo updates:', err),
                                onNext: resp => console.log('Create event:', resp),

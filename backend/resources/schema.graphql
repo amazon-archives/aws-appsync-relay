@@ -37,6 +37,7 @@ input CreateTodoInput {
 type CreateTodoPayload {
   edge: TodoEdge
   clientMutationId: ID
+  userId: ID!
 }
 
 input UpdateTodoInput {
@@ -48,6 +49,7 @@ input UpdateTodoInput {
 type UpdateTodoPayload {
   node: Todo
   clientMutationId: ID
+  userId: ID!
 }
 
 type Viewer implements Node {
@@ -66,9 +68,9 @@ type Mutation {
 }
 
 type Subscription {
-  createdTodo: CreateTodoPayload
+  createdTodo(userId: ID!): CreateTodoPayload
   @aws_subscribe(mutations: ["createTodo"])
-  updatedTodo: UpdateTodoPayload
+  updatedTodo(userId: ID!): UpdateTodoPayload
   @aws_subscribe(mutations: ["updateTodo"])
 }
 

@@ -1,8 +1,7 @@
 #set($input = $ctx.args.input)
 #set($input.createdAt = $util.time.nowISO8601())
 #set($input.complete = false)
-## Just one user for now
-#set($input.userId = "0")
+#set($input.userId = "$context.identity.sub")
 {
     "version" : "2017-02-28",
     "operation" : "PutItem",

@@ -12,6 +12,7 @@ type Todo_todo$ref = any;
 import type { FragmentReference } from "relay-runtime";
 declare export opaque type TodoList_viewer$ref: FragmentReference;
 export type TodoList_viewer = {|
+  +id: ?string,
   +listTodos: {|
     +edges: ?$ReadOnlyArray<{|
       +node: {|
@@ -25,7 +26,15 @@ export type TodoList_viewer = {|
 */
 
 
-const node/*: ConcreteFragment*/ = {
+const node/*: ConcreteFragment*/ = (function(){
+var v0 = {
+  "kind": "ScalarField",
+  "alias": null,
+  "name": "id",
+  "args": null,
+  "storageKey": null
+};
+return {
   "kind": "Fragment",
   "name": "TodoList_viewer",
   "type": "Viewer",
@@ -56,6 +65,7 @@ const node/*: ConcreteFragment*/ = {
     }
   ],
   "selections": [
+    v0,
     {
       "kind": "LinkedField",
       "alias": "listTodos",
@@ -83,13 +93,7 @@ const node/*: ConcreteFragment*/ = {
               "concreteType": "Todo",
               "plural": false,
               "selections": [
-                {
-                  "kind": "ScalarField",
-                  "alias": null,
-                  "name": "id",
-                  "args": null,
-                  "storageKey": null
-                },
+                v0,
                 {
                   "kind": "FragmentSpread",
                   "name": "Todo_todo",
@@ -142,6 +146,7 @@ const node/*: ConcreteFragment*/ = {
     }
   ]
 };
+})();
 // prettier-ignore
-(node/*: any*/).hash = 'bcc3cd62f0cf4f3e37ada2471275468b';
+(node/*: any*/).hash = '80bd207701de46d7f1722477f193a9c3';
 module.exports = node;

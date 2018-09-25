@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash a023f253731b343f293bd647113166ae
+ * @relayHash b86c3ddaab38eb1afd947a4ba5111c63
  */
 
 /* eslint-disable */
@@ -19,6 +19,10 @@ export type TodoListPaginationQueryResponse = {|
     +$fragmentRefs: TodoList_viewer$ref
   |}
 |};
+export type TodoListPaginationQuery = {|
+  variables: TodoListPaginationQueryVariables,
+  response: TodoListPaginationQueryResponse,
+|};
 */
 
 
@@ -34,6 +38,7 @@ query TodoListPaginationQuery(
 }
 
 fragment TodoList_viewer_1G22uz on Viewer {
+  id
   listTodos(first: $count, after: $cursor) {
     edges {
       node {
@@ -78,13 +83,27 @@ v1 = {
   "name": "id",
   "args": null,
   "storageKey": null
-};
+},
+v2 = [
+  {
+    "kind": "Variable",
+    "name": "after",
+    "variableName": "cursor",
+    "type": "String"
+  },
+  {
+    "kind": "Variable",
+    "name": "first",
+    "variableName": "count",
+    "type": "Int"
+  }
+];
 return {
   "kind": "Request",
   "operationKind": "query",
   "name": "TodoListPaginationQuery",
   "id": null,
-  "text": "query TodoListPaginationQuery(\n  $count: Int!\n  $cursor: String\n) {\n  viewer {\n    ...TodoList_viewer_1G22uz\n    id\n  }\n}\n\nfragment TodoList_viewer_1G22uz on Viewer {\n  listTodos(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        ...Todo_todo\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment Todo_todo on Todo {\n  id\n  complete\n  text\n}\n",
+  "text": "query TodoListPaginationQuery(\n  $count: Int!\n  $cursor: String\n) {\n  viewer {\n    ...TodoList_viewer_1G22uz\n    id\n  }\n}\n\nfragment TodoList_viewer_1G22uz on Viewer {\n  id\n  listTodos(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        ...Todo_todo\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment Todo_todo on Todo {\n  id\n  complete\n  text\n}\n",
   "metadata": {},
   "fragment": {
     "kind": "Fragment",
@@ -138,25 +157,13 @@ return {
         "concreteType": "Viewer",
         "plural": false,
         "selections": [
+          v1,
           {
             "kind": "LinkedField",
             "alias": null,
             "name": "listTodos",
             "storageKey": null,
-            "args": [
-              {
-                "kind": "Variable",
-                "name": "after",
-                "variableName": "cursor",
-                "type": "String"
-              },
-              {
-                "kind": "Variable",
-                "name": "first",
-                "variableName": "count",
-                "type": "Int"
-              }
-            ],
+            "args": v2,
             "concreteType": "TodoConnection",
             "plural": false,
             "selections": [
@@ -242,25 +249,11 @@ return {
             "kind": "LinkedHandle",
             "alias": null,
             "name": "listTodos",
-            "args": [
-              {
-                "kind": "Variable",
-                "name": "after",
-                "variableName": "cursor",
-                "type": "String"
-              },
-              {
-                "kind": "Variable",
-                "name": "first",
-                "variableName": "count",
-                "type": "Int"
-              }
-            ],
+            "args": v2,
             "handle": "connection",
             "key": "TodoList_listTodos",
             "filters": null
-          },
-          v1
+          }
         ]
       }
     ]

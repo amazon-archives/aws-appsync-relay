@@ -9,5 +9,11 @@
      "expressionValues" : {
             ":c" : $util.dynamodb.toDynamoDBJson($ctx.args.input.complete)
         }
+    },
+    "condition" : {
+      "expression"       : "userId = :sub",
+      "expressionValues" : {
+          ":sub" : { "S" : "${context.identity.sub}" }
+      }
     }
 }
