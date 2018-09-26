@@ -1,2 +1,0 @@
-## Need to include `userId` as a top-level field for authorization
-{"node": $util.toJson($ctx.result), "clientMutationId": "${context.arguments.input.clientMutationId}", "userId": "$context.identity.sub"}

@@ -20,7 +20,7 @@
   "scripts": {
     "build": "webpack --mode production",
     "serve": "script/with-appsync-env webpack-dev-server --mode development",
-    "relay": "relay-compiler --src ./src --schema ./backend/resources/schema.graphql"
+    "relay": "relay-compiler --src ./src --schema ./backend/schema.graphql"
   },
   "dependencies": {
     "@material-ui/core": "^1.3.0",

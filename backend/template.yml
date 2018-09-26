@@ -1,6 +1,107 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
+Metadata:
+  ResolverTemplates:
+    - &EmptyRequest |
+        {
+          "version": "2017-02-28",
+          "payload": {}
+        }
+    - &ViewerResponse |
+        {"id": "$context.identity.sub"}
+    - &ListRequest |
+        {
+          "version": "2017-02-28",
+          "operation": "Query",
+          "query": {
+            "expression": "userId = :u",
+            "expressionValues": {
+              ":u": {"S": "$context.identity.sub"}
+            }
+          },
+          "index": "CreatedAtIndex",
+          "nextToken": #if($ctx.args.after) "$ctx.args.after" #else null #end,
+          "limit": #if($ctx.args.first) $ctx.args.first #else 10 #end,
+          "scanIndexForward": false,
+          "consistentRead": false,
+          "select": "ALL_ATTRIBUTES"
+        }
+    - &ListResponse |
+        #set($edges = [])
+        #foreach($item in $ctx.result.items)
+        ## Omitting the cursor field on EdgeType is a bit of a departure
+        ## from the Relay spec, but AppSync DynamoDB resolver mappings
+        ## deal strictly in opaque, page-level pagination tokens.
+        ## As of Relay 1.6.0, the cursor field on EdgeType is not used internally,
+        ## and the only consequence of this field missing is that the optional cursor
+        ## argument to `ConnectionHandler.inserteEdgeBefore/After` will have no effect.
+        $util.qr($edges.add({"node": $item, "cursor": null}))
+        #end
+        {
+          "edges": $util.toJson($edges),
+          "pageInfo": {
+            "hasPreviousPage": false,
+            "hasNextPage": #if($ctx.result.nextToken) true #else false #end,
+            "endCursor": #if($ctx.result.nextToken) "$ctx.result.nextToken" #else null #end
+          }
+        }
+    - &CreateRequest |
+        #set($input = $ctx.args.input)
+        #set($input.createdAt = $util.time.nowISO8601())
+        #set($input.complete = false)
+        #set($input.userId = "$context.identity.sub")
+        {
+          "version": "2017-02-28",
+          "operation": "PutItem",
+          "key": {
+              "id": $util.dynamodb.toDynamoDBJson($util.autoId())
+          },
+          "attributeValues": $util.dynamodb.toMapValuesJson($input)
+        }
+    - &CreateResponse |
+        ## Need to include `userId` as a top-level field for authorization
+        {
+          "edge": {
+            "node": $util.toJson($ctx.result)
+          },
+          "clientMutationId": "${context.arguments.input.clientMutationId}",
+          "userId": "$context.identity.sub"
+        }
+    - &UpdateRequest |
+        {
+          "version": "2017-02-28",
+          "operation": "UpdateItem",
+          "key": {
+            "id": $util.dynamodb.toDynamoDBJson($ctx.args.input.id),
+          },
+          "update": {
+           "expression": "SET complete = :c",
+           "expressionValues": {
+                  ":c": $util.dynamodb.toDynamoDBJson($ctx.args.input.complete)
+              }
+          },
+          "condition": {
+            "expression": "userId = :sub",
+            "expressionValues": {
+                ":sub": { "S": "${context.identity.sub}" }
+            }
+          }
+        }
+    - &UpdateResponse |
+        ## Need to include `userId` as a top-level field for authorization
+        {
+          "node": $util.toJson($ctx.result),
+          "clientMutationId": "${context.arguments.input.clientMutationId}",
+          "userId": "$context.identity.sub"
+        }
+    - &SubscriptionResponse |
+        #if(${ctx.identity.sub} != ${ctx.arguments.userId})
+            $utils.unauthorized()
+        #else
+        ##User is authorized, but we return null to continue
+            null
+        #end
 Resources:
   UserPool:
     Type: AWS::Cognito::UserPool
@@ -50,7 +151,7 @@ Resources:
   GraphQLSchema:
     Type: AWS::AppSync::GraphQLSchema
     Properties:
-      DefinitionS3Location: {{schema.graphql}}
+      DefinitionS3Location: schema.graphql
       ApiId: !GetAtt GraphQLApi.ApiId
   Table:
     Type: AWS::DynamoDB::Table
@@ -135,12 +236,8 @@ Resources:
       TypeName: Query
       FieldName: viewer
       DataSourceName: !GetAtt LocalSource.Name
-      RequestMappingTemplate: |
-        {
-          "version": "2017-02-28",
-          "payload": {}
-        }
-      ResponseMappingTemplate: '{"id": "$context.identity.sub"}'
+      RequestMappingTemplate: *EmptyRequest
+      ResponseMappingTemplate: *ViewerResponse
   ListTodosResolver:
     Type: AWS::AppSync::Resolver
     Properties:
@@ -148,8 +245,8 @@ Resources:
       TypeName: Viewer
       FieldName: listTodos
       DataSourceName: !GetAtt DynamoSource.Name
-      RequestMappingTemplateS3Location: {{List.request.mapping}}
-      ResponseMappingTemplateS3Location: {{List.response.mapping}}
+      RequestMappingTemplate: *ListRequest
+      ResponseMappingTemplate: *ListResponse
   CreateTodoResolver:
     Type: AWS::AppSync::Resolver
     Properties:
@@ -157,8 +254,8 @@ Resources:
       TypeName: Mutation
       FieldName: createTodo
       DataSourceName: !GetAtt DynamoSource.Name
-      RequestMappingTemplateS3Location: {{Create.request.mapping}}
-      ResponseMappingTemplateS3Location: {{Create.response.mapping}}
+      RequestMappingTemplate: *CreateRequest
+      ResponseMappingTemplate: *CreateResponse
   UpdateTodoResolver:
     Type: AWS::AppSync::Resolver
     Properties:
@@ -166,8 +263,8 @@ Resources:
       TypeName: Mutation
       FieldName: updateTodo
       DataSourceName: !GetAtt DynamoSource.Name
-      RequestMappingTemplateS3Location: {{Update.request.mapping}}
-      ResponseMappingTemplateS3Location: {{Update.response.mapping}}
+      RequestMappingTemplate: *UpdateRequest
+      ResponseMappingTemplate: *UpdateResponse
   CreatedResolver:
     Type: AWS::AppSync::Resolver
     Properties:
@@ -175,18 +272,8 @@ Resources:
       TypeName: Subscription
       FieldName: createdTodo
       DataSourceName: !GetAtt LocalSource.Name
-      RequestMappingTemplate: |
-        {
-          "version": "2017-02-28",
-          "payload": {}
-        }
-      ResponseMappingTemplate: |
-        #if(${ctx.identity.sub} != ${ctx.arguments.userId})
-            $utils.unauthorized()
-        #else
-        ##User is authorized, but we return null to continue
-            null
-        #end
+      RequestMappingTemplate: *EmptyRequest
+      ResponseMappingTemplate: *SubscriptionResponse
   UpdatedResolver:
     Type: AWS::AppSync::Resolver
     Properties:
@@ -194,46 +281,9 @@ Resources:
       TypeName: Subscription
       FieldName: updatedTodo
       DataSourceName: !GetAtt LocalSource.Name
-      RequestMappingTemplate: |
-        {
-          "version": "2017-02-28",
-          "payload": {}
-        }
-      ResponseMappingTemplate: |
-        #if(${ctx.identity.sub} != ${ctx.arguments.userId})
-            $utils.unauthorized()
-        #else
-        ##User is authorized, but we return null to continue
-            null
-        #end
-  HttpEndpoint:
-    Type: AWS::Serverless::Function
-    Properties:
-      Handler: index.handler
-      Runtime: nodejs6.10
-      CodeUri: {{handler.zip}}
-      Environment:
-        Variables:
-          APPSYNC_CONFIG: !Sub |
-
-            {
-              "AppSyncEndpoint": "${GraphQLApi.GraphQLUrl}",
-              "AppSyncRegion": "${AWS::Region}",
-              "UserPool": "${UserPool}",
-              "ClientId": "${Client}"
-            }
-
-          BUNDLE_URL: {{bundle.js}}
-      Events:
-        Api:
-          Type: Api
-          Properties:
-            Path: /
-            Method: GET
+      RequestMappingTemplate: *EmptyRequest
+      ResponseMappingTemplate: *SubscriptionResponse
 Outputs:
-  AppURL:
-    Description: "Access the sample app here!"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
   AppSyncEndpoint:
     Value: !GetAtt GraphQLApi.GraphQLUrl
   AppSyncRegion:
