@@ -19,7 +19,7 @@
   },
   "scripts": {
     "build": "webpack --mode production",
-    "serve": "script/with-appsync-env webpack-dev-server --mode development",
+    "serve": "webpack-dev-server --mode development",
     "relay": "relay-compiler --src ./src --schema ./backend/schema.graphql"
   },
   "dependencies": {

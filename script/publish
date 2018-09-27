@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -eu
+
+if ! [[ $STATIC_SITE_BUCKET ]]; then
+    echo "$STATIC_SITE_BUCKET env var must be set"
+    exit 1
+fi
+
+"$(dirname $BASH_SOURCE)/with-appsync-env" npm run build
+aws s3 sync "$(dirname $BASH_SOURCE)/../dist" "s3://$STATIC_SITE_BUCKET"
