@@ -1,7 +1,9 @@
 import React from 'react';
+import { Auth } from 'aws-amplify';
 import { withAuthenticator } from 'aws-amplify-react';
 import { QueryRenderer, graphql } from 'react-relay';
 import AppBar from '@material-ui/core/AppBar';
+import Button from '@material-ui/core/Button';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -12,15 +14,31 @@ import TodoList from './TodoList';
 import environment from '../environment';
 
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {userInfo: null};
+    Auth.currentUserInfo().then(info => {
+      this.setState({userInfo: info});
+    })
+  }
+
   render() {
     return (
       <React.Fragment>
         <CssBaseline/>
         <AppBar position="fixed" color="default">
           <Toolbar>
-            <Typography variant="title" color="inherit">
+            <Typography variant="title" color="inherit" style={{flex: 1}}>
               Todo List
             </Typography>
+            <Typography variant="subheading" style={{margin: "0 10px"}}>
+              Logged in as {this.state.userInfo && this.state.userInfo.username}.
+            </Typography>
+            <Button onClick={() => {
+              Auth.signOut().then(() => location.reload());
+            }}>
+              Sign Out
+            </Button>
           </Toolbar>
         </AppBar>
         <div style={{display: 'flex', justifyContent: 'center'}}>
