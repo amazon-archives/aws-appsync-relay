@@ -18,6 +18,33 @@ const updateSubscription = graphql`
   }
 `;
 
+const deleteSubscription = graphql`
+  subscription TodoListDeleteSubscription($user: ID!) {
+    deletedTodo(userId: $user)  {
+      deletedId
+    }
+  }
+`;
+
+
+function subscribeToDeletes(env, viewer) {
+  return requestSubscription(env,
+                             {
+                               subscription: deleteSubscription,
+                               variables: {user: viewer.id},
+                               onCompleted: () => console.log('Delete subscription closed.'),
+                               onError: err => console.error('Error subscribing to todo deletes:', err),
+                               onNext: resp => console.log('Delete event:', resp),
+                               configs: [{
+                                 type: 'RANGE_DELETE',
+                                 parentID: viewer.id,
+                                 connectionKeys: [{key: 'TodoList_listTodos'}],
+                                 pathToConnection: ['viewer', 'edges'],
+                                 deletedIDFieldName: 'deletedId',
+                               }]
+                             });
+}
+
 
 class TodoList extends React.Component {
   constructor(props) {
@@ -35,6 +62,7 @@ class TodoList extends React.Component {
                             onNext: resp => console.log('Update event:', resp),
                             onError: err => console.error('Error subscribing to todo updates:', err)
                           });
+      subscribeToDeletes(this.props.relay.environment, this.props.viewer);
     }
   }
 
@@ -74,7 +102,7 @@ class TodoList extends React.Component {
     } else {
       return (<React.Fragment>
                 <List>
-                  {edges.map((edge) => <Todo key={edge.node.id} todo={edge.node}/>)}
+                  {edges.map((edge) => <Todo key={edge.node.id} todo={edge.node} viewer={viewer}/>)}
                 </List>
                 {this.props.relay.hasMore() &&
                   <div style={{display: 'flex', justifyContent: 'center', padding: '0 20px 20px 20px'}}>
@@ -94,6 +122,7 @@ export default createPaginationContainer(
         cursor: {type: "String"}
     ) {
       id
+      ...Todo_viewer
       listTodos(first: $count after: $cursor) @connection(key: "TodoList_listTodos") {
         edges {
           node {

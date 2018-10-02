@@ -52,6 +52,17 @@ type UpdateTodoPayload {
   userId: ID!
 }
 
+input DeleteTodoInput {
+  id: ID!
+  clientMutationId: ID
+}
+
+type DeleteTodoPayload {
+  deletedId: ID
+  clientMutationId: ID
+  userId: ID!
+}
+
 type Viewer implements Node {
   id: ID
   listTodos(after: String, first: Int): TodoConnection!
@@ -59,12 +70,16 @@ type Viewer implements Node {
 
 type Query {
   viewer: Viewer!
-  node(id: ID!): Node
+  # Per https://github.com/facebook/relay/issues/1654, this field is optional,
+  # as it's up to the app developer to use. We won't use it in this example
+  # but it would be easy to add if desired
+  # node(id: ID!): Node
 }
 
 type Mutation {
   createTodo(input: CreateTodoInput!): CreateTodoPayload!
   updateTodo(input: UpdateTodoInput!): UpdateTodoPayload!
+  deleteTodo(input: DeleteTodoInput!): DeleteTodoPayload!
 }
 
 type Subscription {
@@ -72,6 +87,8 @@ type Subscription {
   @aws_subscribe(mutations: ["createTodo"])
   updatedTodo(userId: ID!): UpdateTodoPayload
   @aws_subscribe(mutations: ["updateTodo"])
+  deletedTodo(userId: ID!): DeleteTodoPayload
+  @aws_subscribe(mutations: ["deleteTodo"])
 }
 
 schema {

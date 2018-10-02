@@ -9,6 +9,7 @@
 /*::
 import type { ConcreteFragment } from 'relay-runtime';
 type Todo_todo$ref = any;
+type Todo_viewer$ref = any;
 import type { FragmentReference } from "relay-runtime";
 declare export opaque type TodoList_viewer$ref: FragmentReference;
 export type TodoList_viewer = {|
@@ -21,6 +22,7 @@ export type TodoList_viewer = {|
       |}
     |}>
   |},
+  +$fragmentRefs: Todo_viewer$ref,
   +$refType: TodoList_viewer$ref,
 |};
 */
@@ -66,6 +68,11 @@ return {
   ],
   "selections": [
     v0,
+    {
+      "kind": "FragmentSpread",
+      "name": "Todo_viewer",
+      "args": null
+    },
     {
       "kind": "LinkedField",
       "alias": "listTodos",
@@ -148,5 +155,5 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '80bd207701de46d7f1722477f193a9c3';
+(node/*: any*/).hash = '096aae81d72bca23ff2013743e0ca892';
 module.exports = node;

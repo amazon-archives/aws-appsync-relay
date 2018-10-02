@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 25654e194bb55b72ae12d05a47bc23bc
+ * @relayHash 25944c83124aa71b6d2add1e4b2fbec6
  */
 
 /* eslint-disable */
@@ -44,6 +44,7 @@ fragment CreateTodo_viewer on Viewer {
 
 fragment TodoList_viewer_yu5n1 on Viewer {
   id
+  ...Todo_viewer
   listTodos(first: $count) {
     edges {
       node {
@@ -58,6 +59,10 @@ fragment TodoList_viewer_yu5n1 on Viewer {
       hasNextPage
     }
   }
+}
+
+fragment Todo_viewer on Viewer {
+  id
 }
 
 fragment Todo_todo on Todo {
@@ -96,7 +101,7 @@ return {
   "operationKind": "query",
   "name": "AppQuery",
   "id": null,
-  "text": "query AppQuery(\n  $count: Int\n) {\n  viewer {\n    id\n    ...CreateTodo_viewer\n    ...TodoList_viewer_yu5n1\n  }\n}\n\nfragment CreateTodo_viewer on Viewer {\n  id\n}\n\nfragment TodoList_viewer_yu5n1 on Viewer {\n  id\n  listTodos(first: $count) {\n    edges {\n      node {\n        id\n        ...Todo_todo\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment Todo_todo on Todo {\n  id\n  complete\n  text\n}\n",
+  "text": "query AppQuery(\n  $count: Int\n) {\n  viewer {\n    id\n    ...CreateTodo_viewer\n    ...TodoList_viewer_yu5n1\n  }\n}\n\nfragment CreateTodo_viewer on Viewer {\n  id\n}\n\nfragment TodoList_viewer_yu5n1 on Viewer {\n  id\n  ...Todo_viewer\n  listTodos(first: $count) {\n    edges {\n      node {\n        id\n        ...Todo_todo\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment Todo_viewer on Viewer {\n  id\n}\n\nfragment Todo_todo on Todo {\n  id\n  complete\n  text\n}\n",
   "metadata": {},
   "fragment": {
     "kind": "Fragment",

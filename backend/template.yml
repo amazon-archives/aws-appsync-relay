@@ -21,15 +21,15 @@ Metadata:
             }
           },
           "index": "CreatedAtIndex",
-          "nextToken": #if($ctx.args.after) "$ctx.args.after" #else null #end,
-          "limit": #if($ctx.args.first) $ctx.args.first #else 10 #end,
+          "nextToken": #if($context.args.after) "$context.args.after" #else null #end,
+          "limit": #if($context.args.first) $context.args.first #else 10 #end,
           "scanIndexForward": false,
           "consistentRead": false,
           "select": "ALL_ATTRIBUTES"
         }
     - &ListResponse |
         #set($edges = [])
-        #foreach($item in $ctx.result.items)
+        #foreach($item in $context.result.items)
         ## Omitting the cursor field on EdgeType is a bit of a departure
         ## from the Relay spec, but AppSync DynamoDB resolver mappings
         ## deal strictly in opaque, page-level pagination tokens.
@@ -42,12 +42,12 @@ Metadata:
           "edges": $util.toJson($edges),
           "pageInfo": {
             "hasPreviousPage": false,
-            "hasNextPage": #if($ctx.result.nextToken) true #else false #end,
-            "endCursor": #if($ctx.result.nextToken) "$ctx.result.nextToken" #else null #end
+            "hasNextPage": #if($context.result.nextToken) true #else false #end,
+            "endCursor": #if($context.result.nextToken) "$context.result.nextToken" #else null #end
           }
         }
     - &CreateRequest |
-        #set($input = $ctx.args.input)
+        #set($input = $context.args.input)
         #set($input.createdAt = $util.time.nowISO8601())
         #set($input.complete = false)
         #set($input.userId = "$context.identity.sub")
@@ -63,9 +63,9 @@ Metadata:
         ## Need to include `userId` as a top-level field for authorization
         {
           "edge": {
-            "node": $util.toJson($ctx.result)
+            "node": $util.toJson($context.result)
           },
-          "clientMutationId": "${context.arguments.input.clientMutationId}",
+          "clientMutationId": "$context.arguments.input.clientMutationId",
           "userId": "$context.identity.sub"
         }
     - &UpdateRequest |
@@ -73,30 +73,51 @@ Metadata:
           "version": "2017-02-28",
           "operation": "UpdateItem",
           "key": {
-            "id": $util.dynamodb.toDynamoDBJson($ctx.args.input.id),
+            "id": $util.dynamodb.toDynamoDBJson($context.args.input.id),
           },
           "update": {
            "expression": "SET complete = :c",
            "expressionValues": {
-                  ":c": $util.dynamodb.toDynamoDBJson($ctx.args.input.complete)
+                  ":c": $util.dynamodb.toDynamoDBJson($context.args.input.complete)
               }
           },
           "condition": {
             "expression": "userId = :sub",
             "expressionValues": {
-                ":sub": { "S": "${context.identity.sub}" }
+                ":sub": { "S": "$context.identity.sub" }
             }
           }
         }
     - &UpdateResponse |
         ## Need to include `userId` as a top-level field for authorization
         {
-          "node": $util.toJson($ctx.result),
-          "clientMutationId": "${context.arguments.input.clientMutationId}",
+          "node": $util.toJson($context.result),
+          "clientMutationId": "$context.arguments.input.clientMutationId",
+          "userId": "$context.identity.sub"
+        }
+    - &DeleteRequest |
+        {
+          "version": "2017-02-28",
+          "operation": "DeleteItem",
+          "key": {
+            "id": $util.dynamodb.toDynamoDBJson($context.args.input.id),
+          },
+          "condition": {
+            "expression": "userId = :sub",
+            "expressionValues": {
+                ":sub": { "S": "$context.identity.sub" }
+            }
+          }
+        }
+    - &DeleteResponse |
+        ## Need to include `userId` as a top-level field for authorization
+        {
+          "deletedId": "$context.result.id",
+          "clientMutationId": "$context.arguments.input.clientMutationId",
           "userId": "$context.identity.sub"
         }
     - &SubscriptionResponse |
-        #if(${ctx.identity.sub} != ${ctx.arguments.userId})
+        #if($context.identity.sub != $context.arguments.userId)
             $utils.unauthorized()
         #else
         ##User is authorized, but we return null to continue
@@ -265,6 +286,15 @@ Resources:
       DataSourceName: !GetAtt DynamoSource.Name
       RequestMappingTemplate: *UpdateRequest
       ResponseMappingTemplate: *UpdateResponse
+  DeleteTodoResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      TypeName: Mutation
+      FieldName: deleteTodo
+      DataSourceName: !GetAtt DynamoSource.Name
+      RequestMappingTemplate: *DeleteRequest
+      ResponseMappingTemplate: *DeleteResponse
   CreatedResolver:
     Type: AWS::AppSync::Resolver
     Properties:
@@ -280,6 +310,15 @@ Resources:
       ApiId: !GetAtt GraphQLApi.ApiId
       TypeName: Subscription
       FieldName: updatedTodo
+      DataSourceName: !GetAtt LocalSource.Name
+      RequestMappingTemplate: *EmptyRequest
+      ResponseMappingTemplate: *SubscriptionResponse
+  DeletedResolver:
+    Type: AWS::AppSync::Resolver
+    Properties:
+      ApiId: !GetAtt GraphQLApi.ApiId
+      TypeName: Subscription
+      FieldName: deletedTodo
       DataSourceName: !GetAtt LocalSource.Name
       RequestMappingTemplate: *EmptyRequest
       ResponseMappingTemplate: *SubscriptionResponse

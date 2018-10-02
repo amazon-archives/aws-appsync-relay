@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash b86c3ddaab38eb1afd947a4ba5111c63
+ * @relayHash 893d88e57f65a46412b65f164064b486
  */
 
 /* eslint-disable */
@@ -39,6 +39,7 @@ query TodoListPaginationQuery(
 
 fragment TodoList_viewer_1G22uz on Viewer {
   id
+  ...Todo_viewer
   listTodos(first: $count, after: $cursor) {
     edges {
       node {
@@ -53,6 +54,10 @@ fragment TodoList_viewer_1G22uz on Viewer {
       hasNextPage
     }
   }
+}
+
+fragment Todo_viewer on Viewer {
+  id
 }
 
 fragment Todo_todo on Todo {
@@ -103,7 +108,7 @@ return {
   "operationKind": "query",
   "name": "TodoListPaginationQuery",
   "id": null,
-  "text": "query TodoListPaginationQuery(\n  $count: Int!\n  $cursor: String\n) {\n  viewer {\n    ...TodoList_viewer_1G22uz\n    id\n  }\n}\n\nfragment TodoList_viewer_1G22uz on Viewer {\n  id\n  listTodos(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        ...Todo_todo\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment Todo_todo on Todo {\n  id\n  complete\n  text\n}\n",
+  "text": "query TodoListPaginationQuery(\n  $count: Int!\n  $cursor: String\n) {\n  viewer {\n    ...TodoList_viewer_1G22uz\n    id\n  }\n}\n\nfragment TodoList_viewer_1G22uz on Viewer {\n  id\n  ...Todo_viewer\n  listTodos(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        ...Todo_todo\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment Todo_viewer on Viewer {\n  id\n}\n\nfragment Todo_todo on Todo {\n  id\n  complete\n  text\n}\n",
   "metadata": {},
   "fragment": {
     "kind": "Fragment",

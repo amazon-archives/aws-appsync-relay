@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 89532f62b849938581fbcbf10cfd265e
+ * @relayHash 7dcac7eecb6b51b1169a054e0fecb718
  */
 
 /* eslint-disable */
@@ -14,10 +14,10 @@ export type UpdateTodoInput = {
   complete?: ?boolean,
   clientMutationId?: ?string,
 };
-export type TodoMutationVariables = {|
+export type TodoUpdateMutationVariables = {|
   input: UpdateTodoInput
 |};
-export type TodoMutationResponse = {|
+export type TodoUpdateMutationResponse = {|
   +updateTodo: {|
     +node: ?{|
       +complete: boolean
@@ -25,15 +25,15 @@ export type TodoMutationResponse = {|
     +userId: string,
   |}
 |};
-export type TodoMutation = {|
-  variables: TodoMutationVariables,
-  response: TodoMutationResponse,
+export type TodoUpdateMutation = {|
+  variables: TodoUpdateMutationVariables,
+  response: TodoUpdateMutationResponse,
 |};
 */
 
 
 /*
-mutation TodoMutation(
+mutation TodoUpdateMutation(
   $input: UpdateTodoInput!
 ) {
   updateTodo(input: $input) {
@@ -80,13 +80,13 @@ v3 = {
 return {
   "kind": "Request",
   "operationKind": "mutation",
-  "name": "TodoMutation",
+  "name": "TodoUpdateMutation",
   "id": null,
-  "text": "mutation TodoMutation(\n  $input: UpdateTodoInput!\n) {\n  updateTodo(input: $input) {\n    node {\n      complete\n      id\n    }\n    userId\n  }\n}\n",
+  "text": "mutation TodoUpdateMutation(\n  $input: UpdateTodoInput!\n) {\n  updateTodo(input: $input) {\n    node {\n      complete\n      id\n    }\n    userId\n  }\n}\n",
   "metadata": {},
   "fragment": {
     "kind": "Fragment",
-    "name": "TodoMutation",
+    "name": "TodoUpdateMutation",
     "type": "Mutation",
     "metadata": null,
     "argumentDefinitions": v0,
@@ -119,7 +119,7 @@ return {
   },
   "operation": {
     "kind": "Operation",
-    "name": "TodoMutation",
+    "name": "TodoUpdateMutation",
     "argumentDefinitions": v0,
     "selections": [
       {
@@ -158,5 +158,5 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'a3d2cdca615578f4575d4f24cbedace7';
+(node/*: any*/).hash = '1686c973944c12c4375d14ccea72d991';
 module.exports = node;

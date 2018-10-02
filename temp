@@ -1,0 +1,399 @@
+
+AWSTemplateFormatVersion: 2010-09-09
+Metadata:
+  ResolverTemplates:
+  - "{\n  \"version\": \"2017-02-28\",\n  \"payload\": {}\n}\n"
+  - '{"id": "$context.identity.sub"}
+
+    '
+  - "{\n  \"version\": \"2017-02-28\",\n  \"operation\": \"Query\",\n  \"query\":\
+    \ {\n    \"expression\": \"userId = :u\",\n    \"expressionValues\": {\n     \
+    \ \":u\": {\"S\": \"$context.identity.sub\"}\n    }\n  },\n  \"index\": \"CreatedAtIndex\"\
+    ,\n  \"nextToken\": #if($context.args.after) \"$context.args.after\" #else null\
+    \ #end,\n  \"limit\": #if($context.args.first) $context.args.first #else 10 #end,\n\
+    \  \"scanIndexForward\": false,\n  \"consistentRead\": false,\n  \"select\": \"\
+    ALL_ATTRIBUTES\"\n}\n"
+  - "#set($edges = [])\n#foreach($item in $context.result.items)\n## Omitting the\
+    \ cursor field on EdgeType is a bit of a departure\n## from the Relay spec, but\
+    \ AppSync DynamoDB resolver mappings\n## deal strictly in opaque, page-level pagination\
+    \ tokens.\n## As of Relay 1.6.0, the cursor field on EdgeType is not used internally,\n\
+    ## and the only consequence of this field missing is that the optional cursor\n\
+    ## argument to `ConnectionHandler.inserteEdgeBefore/After` will have no effect.\n\
+    $util.qr($edges.add({\"node\": $item, \"cursor\": null}))\n#end\n{\n  \"edges\"\
+    : $util.toJson($edges),\n  \"pageInfo\": {\n    \"hasPreviousPage\": false,\n\
+    \    \"hasNextPage\": #if($context.result.nextToken) true #else false #end,\n\
+    \    \"endCursor\": #if($context.result.nextToken) \"$context.result.nextToken\"\
+    \ #else null #end\n  }\n}\n"
+  - "#set($input = $context.args.input)\n#set($input.createdAt = $util.time.nowISO8601())\n\
+    #set($input.complete = false)\n#set($input.userId = \"$context.identity.sub\"\
+    )\n{\n  \"version\": \"2017-02-28\",\n  \"operation\": \"PutItem\",\n  \"key\"\
+    : {\n      \"id\": $util.dynamodb.toDynamoDBJson($util.autoId())\n  },\n  \"attributeValues\"\
+    : $util.dynamodb.toMapValuesJson($input)\n}\n"
+  - "## Need to include `userId` as a top-level field for authorization\n{\n  \"edge\"\
+    : {\n    \"node\": $util.toJson($context.result)\n  },\n  \"clientMutationId\"\
+    : \"$context.arguments.input.clientMutationId\",\n  \"userId\": \"$context.identity.sub\"\
+    \n}\n"
+  - "{\n  \"version\": \"2017-02-28\",\n  \"operation\": \"UpdateItem\",\n  \"key\"\
+    : {\n    \"id\": $util.dynamodb.toDynamoDBJson($context.args.input.id),\n  },\n\
+    \  \"update\": {\n   \"expression\": \"SET complete = :c\",\n   \"expressionValues\"\
+    : {\n          \":c\": $util.dynamodb.toDynamoDBJson($context.args.input.complete)\n\
+    \      }\n  },\n  \"condition\": {\n    \"expression\": \"userId = :sub\",\n \
+    \   \"expressionValues\": {\n        \":sub\": { \"S\": \"$context.identity.sub\"\
+    \ }\n    }\n  }\n}\n"
+  - "## Need to include `userId` as a top-level field for authorization\n{\n  \"node\"\
+    : $util.toJson($context.result),\n  \"clientMutationId\": \"$context.arguments.input.clientMutationId\"\
+    ,\n  \"userId\": \"$context.identity.sub\"\n}\n"
+  - "{\n  \"version\": \"2017-02-28\",\n  \"operation\": \"DeleteItem\",\n  \"key\"\
+    : {\n    \"id\": $util.dynamodb.toDynamoDBJson($context.args.input.id),\n  },\n\
+    \  \"condition\": {\n    \"expression\": \"userId = :sub\",\n    \"expressionValues\"\
+    : {\n        \":sub\": { \"S\": \"$context.identity.sub\" }\n    }\n  }\n}\n"
+  - "## Need to include `userId` as a top-level field for authorization\n{\n  \"deletedId\"\
+    : \"$context.result.id\",\n  \"clientMutationId\": \"$context.arguments.input.clientMutationId\"\
+    ,\n  \"userId\": \"$context.identity.sub\"\n}\n"
+  - "#if($context.identity.sub != $context.arguments.userId)\n    $utils.unauthorized()\n\
+    #else\n##User is authorized, but we return null to continue\n    null\n#end\n"
+Outputs:
+  AppSyncEndpoint:
+    Value:
+      Fn::GetAtt:
+      - GraphQLApi
+      - GraphQLUrl
+  AppSyncRegion:
+    Value:
+      Ref: AWS::Region
+  ClientId:
+    Value:
+      Ref: Client
+  UserPool:
+    Value:
+      Ref: UserPool
+Resources:
+  AppsyncLogRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service:
+            - appsync.amazonaws.com
+      Policies:
+      - PolicyDocument:
+          Statement:
+          - Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            Effect: Allow
+            Resource:
+            - arn:aws:logs:*:*:*
+        PolicyName:
+          Fn::Sub: ${AWS::StackName}_appsync_log_policy
+      RoleName:
+        Fn::Sub: ${AWS::StackName}_appsync_log_role
+    Type: AWS::IAM::Role
+  Client:
+    Properties:
+      UserPoolId:
+        Ref: UserPool
+    Type: AWS::Cognito::UserPoolClient
+  CreateTodoResolver:
+    Properties:
+      ApiId:
+        Fn::GetAtt:
+        - GraphQLApi
+        - ApiId
+      DataSourceName:
+        Fn::GetAtt:
+        - DynamoSource
+        - Name
+      FieldName: createTodo
+      RequestMappingTemplate: "#set($input = $context.args.input)\n#set($input.createdAt\
+        \ = $util.time.nowISO8601())\n#set($input.complete = false)\n#set($input.userId\
+        \ = \"$context.identity.sub\")\n{\n  \"version\": \"2017-02-28\",\n  \"operation\"\
+        : \"PutItem\",\n  \"key\": {\n      \"id\": $util.dynamodb.toDynamoDBJson($util.autoId())\n\
+        \  },\n  \"attributeValues\": $util.dynamodb.toMapValuesJson($input)\n}\n"
+      ResponseMappingTemplate: "## Need to include `userId` as a top-level field for\
+        \ authorization\n{\n  \"edge\": {\n    \"node\": $util.toJson($context.result)\n\
+        \  },\n  \"clientMutationId\": \"$context.arguments.input.clientMutationId\"\
+        ,\n  \"userId\": \"$context.identity.sub\"\n}\n"
+      TypeName: Mutation
+    Type: AWS::AppSync::Resolver
+  CreatedResolver:
+    Properties:
+      ApiId:
+        Fn::GetAtt:
+        - GraphQLApi
+        - ApiId
+      DataSourceName:
+        Fn::GetAtt:
+        - LocalSource
+        - Name
+      FieldName: createdTodo
+      RequestMappingTemplate: "{\n  \"version\": \"2017-02-28\",\n  \"payload\": {}\n\
+        }\n"
+      ResponseMappingTemplate: "#if($context.identity.sub != $context.arguments.userId)\n\
+        \    $utils.unauthorized()\n#else\n##User is authorized, but we return null\
+        \ to continue\n    null\n#end\n"
+      TypeName: Subscription
+    Type: AWS::AppSync::Resolver
+  DeleteTodoResolver:
+    Properties:
+      ApiId:
+        Fn::GetAtt:
+        - GraphQLApi
+        - ApiId
+      DataSourceName:
+        Fn::GetAtt:
+        - DynamoSource
+        - Name
+      FieldName: deleteTodo
+      RequestMappingTemplate: "{\n  \"version\": \"2017-02-28\",\n  \"operation\"\
+        : \"DeleteItem\",\n  \"key\": {\n    \"id\": $util.dynamodb.toDynamoDBJson($context.args.input.id),\n\
+        \  },\n  \"condition\": {\n    \"expression\": \"userId = :sub\",\n    \"\
+        expressionValues\": {\n        \":sub\": { \"S\": \"$context.identity.sub\"\
+        \ }\n    }\n  }\n}\n"
+      ResponseMappingTemplate: "## Need to include `userId` as a top-level field for\
+        \ authorization\n{\n  \"deletedId\": \"$context.result.id\",\n  \"clientMutationId\"\
+        : \"$context.arguments.input.clientMutationId\",\n  \"userId\": \"$context.identity.sub\"\
+        \n}\n"
+      TypeName: Mutation
+    Type: AWS::AppSync::Resolver
+  DeletedResolver:
+    Properties:
+      ApiId:
+        Fn::GetAtt:
+        - GraphQLApi
+        - ApiId
+      DataSourceName:
+        Fn::GetAtt:
+        - LocalSource
+        - Name
+      FieldName: deletedTodo
+      RequestMappingTemplate: "{\n  \"version\": \"2017-02-28\",\n  \"payload\": {}\n\
+        }\n"
+      ResponseMappingTemplate: "#if($context.identity.sub != $context.arguments.userId)\n\
+        \    $utils.unauthorized()\n#else\n##User is authorized, but we return null\
+        \ to continue\n    null\n#end\n"
+      TypeName: Subscription
+    Type: AWS::AppSync::Resolver
+  DynamoDBRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service:
+            - appsync.amazonaws.com
+      Policies:
+      - PolicyDocument:
+          Statement:
+          - Action:
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:DeleteItem
+            - dynamodb:UpdateItem
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:BatchGetItem
+            - dynamodb:BatchWriteItem
+            Effect: Allow
+            Resource:
+            - Fn::GetAtt:
+              - Table
+              - Arn
+            - Fn::Sub: ${Table.Arn}/*
+          Version: 2012-10-17
+        PolicyName:
+          Fn::Sub: ${AWS::StackName}_datasource_policy
+      RoleName:
+        Fn::Sub: ${AWS::StackName}_datasource_role
+    Type: AWS::IAM::Role
+  DynamoSource:
+    Properties:
+      ApiId:
+        Fn::GetAtt:
+        - GraphQLApi
+        - ApiId
+      DynamoDBConfig:
+        AwsRegion:
+          Ref: AWS::Region
+        TableName:
+          Ref: Table
+        UseCallerCredentials: false
+      Name:
+        Fn::Sub: ${AWS::StackName}_dynamo_datasource
+      ServiceRoleArn:
+        Fn::GetAtt:
+        - DynamoDBRole
+        - Arn
+      Type: AMAZON_DYNAMODB
+    Type: AWS::AppSync::DataSource
+  GraphQLApi:
+    Properties:
+      AuthenticationType: AMAZON_COGNITO_USER_POOLS
+      LogConfig:
+        CloudWatchLogsRoleArn:
+          Fn::GetAtt:
+          - AppsyncLogRole
+          - Arn
+        FieldLogLevel: ALL
+      Name:
+        Fn::Sub: ${AWS::StackName}_api
+      UserPoolConfig:
+        AwsRegion:
+          Ref: AWS::Region
+        DefaultAction: ALLOW
+        UserPoolId:
+          Ref: UserPool
+    Type: AWS::AppSync::GraphQLApi
+  GraphQLSchema:
+    Properties:
+      ApiId:
+        Fn::GetAtt:
+        - GraphQLApi
+        - ApiId
+      DefinitionS3Location: s3://kebel-mobile-test/59fc5e1acd95b40c92c6d202c665e2da
+    Type: AWS::AppSync::GraphQLSchema
+  ListTodosResolver:
+    Properties:
+      ApiId:
+        Fn::GetAtt:
+        - GraphQLApi
+        - ApiId
+      DataSourceName:
+        Fn::GetAtt:
+        - DynamoSource
+        - Name
+      FieldName: listTodos
+      RequestMappingTemplate: "{\n  \"version\": \"2017-02-28\",\n  \"operation\"\
+        : \"Query\",\n  \"query\": {\n    \"expression\": \"userId = :u\",\n    \"\
+        expressionValues\": {\n      \":u\": {\"S\": \"$context.identity.sub\"}\n\
+        \    }\n  },\n  \"index\": \"CreatedAtIndex\",\n  \"nextToken\": #if($context.args.after)\
+        \ \"$context.args.after\" #else null #end,\n  \"limit\": #if($context.args.first)\
+        \ $context.args.first #else 10 #end,\n  \"scanIndexForward\": false,\n  \"\
+        consistentRead\": false,\n  \"select\": \"ALL_ATTRIBUTES\"\n}\n"
+      ResponseMappingTemplate: "#set($edges = [])\n#foreach($item in $context.result.items)\n\
+        ## Omitting the cursor field on EdgeType is a bit of a departure\n## from\
+        \ the Relay spec, but AppSync DynamoDB resolver mappings\n## deal strictly\
+        \ in opaque, page-level pagination tokens.\n## As of Relay 1.6.0, the cursor\
+        \ field on EdgeType is not used internally,\n## and the only consequence of\
+        \ this field missing is that the optional cursor\n## argument to `ConnectionHandler.inserteEdgeBefore/After`\
+        \ will have no effect.\n$util.qr($edges.add({\"node\": $item, \"cursor\":\
+        \ null}))\n#end\n{\n  \"edges\": $util.toJson($edges),\n  \"pageInfo\": {\n\
+        \    \"hasPreviousPage\": false,\n    \"hasNextPage\": #if($context.result.nextToken)\
+        \ true #else false #end,\n    \"endCursor\": #if($context.result.nextToken)\
+        \ \"$context.result.nextToken\" #else null #end\n  }\n}\n"
+      TypeName: Viewer
+    Type: AWS::AppSync::Resolver
+  LocalSource:
+    Properties:
+      ApiId:
+        Fn::GetAtt:
+        - GraphQLApi
+        - ApiId
+      Name:
+        Fn::Sub: ${AWS::StackName}_local_datasource
+      Type: NONE
+    Type: AWS::AppSync::DataSource
+  Table:
+    Properties:
+      AttributeDefinitions:
+      - AttributeName: id
+        AttributeType: S
+      - AttributeName: userId
+        AttributeType: S
+      - AttributeName: createdAt
+        AttributeType: S
+      GlobalSecondaryIndexes:
+      - IndexName: CreatedAtIndex
+        KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+        - AttributeName: createdAt
+          KeyType: RANGE
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+      KeySchema:
+      - AttributeName: id
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      TableName:
+        Fn::Sub: ${AWS::StackName}_table
+    Type: AWS::DynamoDB::Table
+  UpdateTodoResolver:
+    Properties:
+      ApiId:
+        Fn::GetAtt:
+        - GraphQLApi
+        - ApiId
+      DataSourceName:
+        Fn::GetAtt:
+        - DynamoSource
+        - Name
+      FieldName: updateTodo
+      RequestMappingTemplate: "{\n  \"version\": \"2017-02-28\",\n  \"operation\"\
+        : \"UpdateItem\",\n  \"key\": {\n    \"id\": $util.dynamodb.toDynamoDBJson($context.args.input.id),\n\
+        \  },\n  \"update\": {\n   \"expression\": \"SET complete = :c\",\n   \"expressionValues\"\
+        : {\n          \":c\": $util.dynamodb.toDynamoDBJson($context.args.input.complete)\n\
+        \      }\n  },\n  \"condition\": {\n    \"expression\": \"userId = :sub\"\
+        ,\n    \"expressionValues\": {\n        \":sub\": { \"S\": \"$context.identity.sub\"\
+        \ }\n    }\n  }\n}\n"
+      ResponseMappingTemplate: "## Need to include `userId` as a top-level field for\
+        \ authorization\n{\n  \"node\": $util.toJson($context.result),\n  \"clientMutationId\"\
+        : \"$context.arguments.input.clientMutationId\",\n  \"userId\": \"$context.identity.sub\"\
+        \n}\n"
+      TypeName: Mutation
+    Type: AWS::AppSync::Resolver
+  UpdatedResolver:
+    Properties:
+      ApiId:
+        Fn::GetAtt:
+        - GraphQLApi
+        - ApiId
+      DataSourceName:
+        Fn::GetAtt:
+        - LocalSource
+        - Name
+      FieldName: updatedTodo
+      RequestMappingTemplate: "{\n  \"version\": \"2017-02-28\",\n  \"payload\": {}\n\
+        }\n"
+      ResponseMappingTemplate: "#if($context.identity.sub != $context.arguments.userId)\n\
+        \    $utils.unauthorized()\n#else\n##User is authorized, but we return null\
+        \ to continue\n    null\n#end\n"
+      TypeName: Subscription
+    Type: AWS::AppSync::Resolver
+  UserPool:
+    Properties:
+      AutoVerifiedAttributes:
+      - email
+      UserPoolName:
+        Fn::Sub: ${AWS::StackName}_user_pool
+    Type: AWS::Cognito::UserPool
+  ViewerResolver:
+    Properties:
+      ApiId:
+        Fn::GetAtt:
+        - GraphQLApi
+        - ApiId
+      DataSourceName:
+        Fn::GetAtt:
+        - LocalSource
+        - Name
+      FieldName: viewer
+      RequestMappingTemplate: "{\n  \"version\": \"2017-02-28\",\n  \"payload\": {}\n\
+        }\n"
+      ResponseMappingTemplate: '{"id": "$context.identity.sub"}
+
+        '
+      TypeName: Query
+    Type: AWS::AppSync::Resolver
+Transform: AWS::Serverless-2016-10-31
