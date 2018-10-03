@@ -13,6 +13,7 @@ import Grid from '@material-ui/core/Grid';
 // The default `RANGE_ADD` updater almost works,
 // but it would create duplicate entries for
 // local creations and corresponding subscription updates.
+// See also https://github.com/facebook/relay/issues/2023
 function makeUpdater(viewer, rootField) {
   return (store) => {
     let serverEdge = store.getRootField(rootField).getLinkedRecord('edge');

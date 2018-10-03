@@ -36,7 +36,8 @@ Metadata:
         ## As of Relay 1.6.0, the cursor field on EdgeType is not used internally,
         ## and the only consequence of this field missing is that the optional cursor
         ## argument to `ConnectionHandler.inserteEdgeBefore/After` will have no effect.
-        $util.qr($edges.add({"node": $item, "cursor": null}))
+        ## See also https://github.com/facebook/relay/issues/2457
+        $util.quiet($edges.add({"node": $item, "cursor": null}))
         #end
         {
           "edges": $util.toJson($edges),

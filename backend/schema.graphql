@@ -18,7 +18,6 @@ type Todo implements Node {
 }
 
 type TodoConnection {
-  items: [Todo!]
   nextToken: String
   edges: [TodoEdge!]
   pageInfo: PageInfo!
