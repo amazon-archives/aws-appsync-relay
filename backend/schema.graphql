@@ -69,7 +69,7 @@ type Viewer implements Node {
 
 type Query {
   viewer: Viewer!
-  # Per https://github.com/facebook/relay/issues/1654, this field is optional,
+  # Per https://github.com/facebook/relay/issues/1653, this field is optional,
   # as it's up to the app developer to use. We won't use it in this example
   # but it would be easy to add if desired
   # node(id: ID!): Node
