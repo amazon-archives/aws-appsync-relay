@@ -1,3 +1,6 @@
+// Copyright 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: MIT-0
+
 import React from 'react';
 import {graphql, commitMutation, createFragmentContainer} from 'react-relay';
 import IconButton from '@material-ui/core/IconButton';

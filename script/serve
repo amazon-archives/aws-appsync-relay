@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Copyright 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
+
 set -eu
 
 "$(dirname $BASH_SOURCE)/with-appsync-env" npm run serve

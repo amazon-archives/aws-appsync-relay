@@ -1,3 +1,6 @@
+// Copyright 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: MIT-0
+
 import Amplify, {Analytics} from 'aws-amplify';
 import React from 'react';
 import ReactDOM from 'react-dom';

@@ -1,3 +1,6 @@
+// Copyright 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: MIT-0
+
 import React from 'react';
 import {graphql, createPaginationContainer, requestSubscription} from 'react-relay';
 import Button from '@material-ui/core/Button';
