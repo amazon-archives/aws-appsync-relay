@@ -1,5 +1,5 @@
-appsync-relay
-=============
+AWS AppSync Relay
+=================
 
 This sample project shows how to use the Relay library together with an AWS AppSync backend. See the blog post for more in-depth discussion.
 
@@ -58,3 +58,6 @@ aws s3 sync dist s3://my-static-site-bucket
 
 Here "my-static-site-bucket" should be replaced with your S3 bucket configured for static website hosting. You can alternatively use the `script/publish` script, which accepts `STATIC_SITE_BUCKET` as an env var.
 
+## License Summary
+
+This sample code is made available under a modified MIT license. See the LICENSE file.
