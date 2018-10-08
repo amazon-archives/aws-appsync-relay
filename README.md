@@ -1,7 +1,7 @@
 AWS AppSync Relay
 =================
 
-This sample project shows how to use the Relay library together with an AWS AppSync backend. See the blog post for more in-depth discussion.
+This sample project shows how to use the Relay library together with an AWS AppSync backend. See [the blog post](https://medium.com/open-graphql/using-relay-with-aws-appsync-55c89ca02066) for more in-depth discussion.
 
 Here are links to some of the key technologies used in the project:
 
