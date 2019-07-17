@@ -22,7 +22,7 @@ aws cloudformation deploy --template-file packaged_template.yml --stack-name App
 
 Replace "my-package-bucket" with any S3 bucket you want to use to store files required by the CloudFormation stack, such as the GraphQL schema. Note that the `--capabilities` option is required to allow CloudFormation to create IAM roles.
 
-You can also do this with the `script/deploy` script, which requires setting the `S3_BUCKET` env var. You can also optionally set `STACK_NAME` for the name of the CloudFormation stack (the default is `AppSyncRelay`). Note that executable scripts in the `script` directory assume a Unix/macOS/Linux environment, Bash, and `jq` are available.
+You can also do this with the `script/deploy` script, which requires setting the `PACKAGE_BUCKET` env var. You can also optionally set `STACK_NAME` for the name of the CloudFormation stack (the default is `AppSyncRelay`). Note that executable scripts in the `script` directory assume a Unix/macOS/Linux environment, Bash, and `jq` are available.
 
 ## Running the app locally
 
