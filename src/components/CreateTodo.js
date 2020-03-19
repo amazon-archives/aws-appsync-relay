@@ -166,8 +166,10 @@ class CreateTodo extends React.Component {
 
 export default createFragmentContainer(
   CreateTodo,
-  graphql`
-  fragment CreateTodo_viewer on Viewer {
-    id
+  {
+    viewer: graphql`
+    fragment CreateTodo_viewer on Viewer {
+      id
+    }`
   }
-`);
+);

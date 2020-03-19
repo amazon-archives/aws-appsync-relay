@@ -118,7 +118,8 @@ class TodoList extends React.Component {
 
 export default createPaginationContainer(
   TodoList,
-  graphql`
+  {
+    viewer: graphql`
     fragment TodoList_viewer on Viewer
     @argumentDefinitions(
         count: {type: "Int"}
@@ -134,7 +135,8 @@ export default createPaginationContainer(
           }
         }
       }
-    }`,
+    }`
+  },
   {
     direction: 'forward',
     getVariables(props, {count, cursor}, fragmentVariables) {

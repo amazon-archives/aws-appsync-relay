@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 27d465f56cdb56f8858110e6eef47cb9
+ * @relayHash 74f9758cddfa20ccc6e07de975556549
  */
 
 /* eslint-disable */
@@ -58,8 +58,7 @@ v1 = [
   {
     "kind": "Variable",
     "name": "userId",
-    "variableName": "user",
-    "type": "ID!"
+    "variableName": "user"
   }
 ],
 v2 = {
@@ -78,24 +77,19 @@ v3 = {
 };
 return {
   "kind": "Request",
-  "operationKind": "subscription",
-  "name": "CreateTodoSubscription",
-  "id": null,
-  "text": "subscription CreateTodoSubscription(\n  $user: ID!\n) {\n  createdTodo(userId: $user) {\n    edge {\n      node {\n        text\n        complete\n        id\n      }\n    }\n  }\n}\n",
-  "metadata": {},
   "fragment": {
     "kind": "Fragment",
     "name": "CreateTodoSubscription",
     "type": "Subscription",
     "metadata": null,
-    "argumentDefinitions": v0,
+    "argumentDefinitions": (v0/*: any*/),
     "selections": [
       {
         "kind": "LinkedField",
         "alias": null,
         "name": "createdTodo",
         "storageKey": null,
-        "args": v1,
+        "args": (v1/*: any*/),
         "concreteType": "CreateTodoPayload",
         "plural": false,
         "selections": [
@@ -117,8 +111,8 @@ return {
                 "concreteType": "Todo",
                 "plural": false,
                 "selections": [
-                  v2,
-                  v3
+                  (v2/*: any*/),
+                  (v3/*: any*/)
                 ]
               }
             ]
@@ -130,14 +124,14 @@ return {
   "operation": {
     "kind": "Operation",
     "name": "CreateTodoSubscription",
-    "argumentDefinitions": v0,
+    "argumentDefinitions": (v0/*: any*/),
     "selections": [
       {
         "kind": "LinkedField",
         "alias": null,
         "name": "createdTodo",
         "storageKey": null,
-        "args": v1,
+        "args": (v1/*: any*/),
         "concreteType": "CreateTodoPayload",
         "plural": false,
         "selections": [
@@ -159,8 +153,8 @@ return {
                 "concreteType": "Todo",
                 "plural": false,
                 "selections": [
-                  v2,
-                  v3,
+                  (v2/*: any*/),
+                  (v3/*: any*/),
                   {
                     "kind": "ScalarField",
                     "alias": null,
@@ -175,9 +169,17 @@ return {
         ]
       }
     ]
+  },
+  "params": {
+    "operationKind": "subscription",
+    "name": "CreateTodoSubscription",
+    "id": null,
+    "text": "subscription CreateTodoSubscription(\n  $user: ID!\n) {\n  createdTodo(userId: $user) {\n    edge {\n      node {\n        text\n        complete\n        id\n      }\n    }\n  }\n}\n",
+    "metadata": {}
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = 'b0e4ce9c2f86588a82119eaa9ed7587e';
+
 module.exports = node;

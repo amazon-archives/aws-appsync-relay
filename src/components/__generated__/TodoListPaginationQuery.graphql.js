@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 893d88e57f65a46412b65f164064b486
+ * @relayHash 1e8f4e74f4e159d32c1cc87be4727aa6
  */
 
 /* eslint-disable */
@@ -56,14 +56,14 @@ fragment TodoList_viewer_1G22uz on Viewer {
   }
 }
 
-fragment Todo_viewer on Viewer {
-  id
-}
-
 fragment Todo_todo on Todo {
   id
   complete
   text
+}
+
+fragment Todo_viewer on Viewer {
+  id
 }
 */
 
@@ -93,29 +93,22 @@ v2 = [
   {
     "kind": "Variable",
     "name": "after",
-    "variableName": "cursor",
-    "type": "String"
+    "variableName": "cursor"
   },
   {
     "kind": "Variable",
     "name": "first",
-    "variableName": "count",
-    "type": "Int"
+    "variableName": "count"
   }
 ];
 return {
   "kind": "Request",
-  "operationKind": "query",
-  "name": "TodoListPaginationQuery",
-  "id": null,
-  "text": "query TodoListPaginationQuery(\n  $count: Int!\n  $cursor: String\n) {\n  viewer {\n    ...TodoList_viewer_1G22uz\n    id\n  }\n}\n\nfragment TodoList_viewer_1G22uz on Viewer {\n  id\n  ...Todo_viewer\n  listTodos(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        ...Todo_todo\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment Todo_viewer on Viewer {\n  id\n}\n\nfragment Todo_todo on Todo {\n  id\n  complete\n  text\n}\n",
-  "metadata": {},
   "fragment": {
     "kind": "Fragment",
     "name": "TodoListPaginationQuery",
     "type": "Query",
     "metadata": null,
-    "argumentDefinitions": v0,
+    "argumentDefinitions": (v0/*: any*/),
     "selections": [
       {
         "kind": "LinkedField",
@@ -133,14 +126,12 @@ return {
               {
                 "kind": "Variable",
                 "name": "count",
-                "variableName": "count",
-                "type": null
+                "variableName": "count"
               },
               {
                 "kind": "Variable",
                 "name": "cursor",
-                "variableName": "cursor",
-                "type": null
+                "variableName": "cursor"
               }
             ]
           }
@@ -151,7 +142,7 @@ return {
   "operation": {
     "kind": "Operation",
     "name": "TodoListPaginationQuery",
-    "argumentDefinitions": v0,
+    "argumentDefinitions": (v0/*: any*/),
     "selections": [
       {
         "kind": "LinkedField",
@@ -162,13 +153,13 @@ return {
         "concreteType": "Viewer",
         "plural": false,
         "selections": [
-          v1,
+          (v1/*: any*/),
           {
             "kind": "LinkedField",
             "alias": null,
             "name": "listTodos",
             "storageKey": null,
-            "args": v2,
+            "args": (v2/*: any*/),
             "concreteType": "TodoConnection",
             "plural": false,
             "selections": [
@@ -190,7 +181,7 @@ return {
                     "concreteType": "Todo",
                     "plural": false,
                     "selections": [
-                      v1,
+                      (v1/*: any*/),
                       {
                         "kind": "ScalarField",
                         "alias": null,
@@ -254,7 +245,7 @@ return {
             "kind": "LinkedHandle",
             "alias": null,
             "name": "listTodos",
-            "args": v2,
+            "args": (v2/*: any*/),
             "handle": "connection",
             "key": "TodoList_listTodos",
             "filters": null
@@ -262,9 +253,17 @@ return {
         ]
       }
     ]
+  },
+  "params": {
+    "operationKind": "query",
+    "name": "TodoListPaginationQuery",
+    "id": null,
+    "text": "query TodoListPaginationQuery(\n  $count: Int!\n  $cursor: String\n) {\n  viewer {\n    ...TodoList_viewer_1G22uz\n    id\n  }\n}\n\nfragment TodoList_viewer_1G22uz on Viewer {\n  id\n  ...Todo_viewer\n  listTodos(first: $count, after: $cursor) {\n    edges {\n      node {\n        id\n        ...Todo_todo\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment Todo_todo on Todo {\n  id\n  complete\n  text\n}\n\nfragment Todo_viewer on Viewer {\n  id\n}\n",
+    "metadata": {}
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '96b5b1e5a70ab7f02d5793b185926213';
+
 module.exports = node;

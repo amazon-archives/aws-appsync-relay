@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash cf7d4b01c32728d82525ed8752742742
+ * @relayHash 77c4b8104233a077c3993d66abe8c9ba
  */
 
 /* eslint-disable */
@@ -52,8 +52,7 @@ v1 = [
   {
     "kind": "Variable",
     "name": "userId",
-    "variableName": "user",
-    "type": "ID!"
+    "variableName": "user"
   }
 ],
 v2 = {
@@ -65,24 +64,19 @@ v2 = {
 };
 return {
   "kind": "Request",
-  "operationKind": "subscription",
-  "name": "TodoListUpdateSubscription",
-  "id": null,
-  "text": "subscription TodoListUpdateSubscription(\n  $user: ID!\n) {\n  updatedTodo(userId: $user) {\n    node {\n      complete\n      id\n    }\n  }\n}\n",
-  "metadata": {},
   "fragment": {
     "kind": "Fragment",
     "name": "TodoListUpdateSubscription",
     "type": "Subscription",
     "metadata": null,
-    "argumentDefinitions": v0,
+    "argumentDefinitions": (v0/*: any*/),
     "selections": [
       {
         "kind": "LinkedField",
         "alias": null,
         "name": "updatedTodo",
         "storageKey": null,
-        "args": v1,
+        "args": (v1/*: any*/),
         "concreteType": "UpdateTodoPayload",
         "plural": false,
         "selections": [
@@ -95,7 +89,7 @@ return {
             "concreteType": "Todo",
             "plural": false,
             "selections": [
-              v2
+              (v2/*: any*/)
             ]
           }
         ]
@@ -105,14 +99,14 @@ return {
   "operation": {
     "kind": "Operation",
     "name": "TodoListUpdateSubscription",
-    "argumentDefinitions": v0,
+    "argumentDefinitions": (v0/*: any*/),
     "selections": [
       {
         "kind": "LinkedField",
         "alias": null,
         "name": "updatedTodo",
         "storageKey": null,
-        "args": v1,
+        "args": (v1/*: any*/),
         "concreteType": "UpdateTodoPayload",
         "plural": false,
         "selections": [
@@ -125,7 +119,7 @@ return {
             "concreteType": "Todo",
             "plural": false,
             "selections": [
-              v2,
+              (v2/*: any*/),
               {
                 "kind": "ScalarField",
                 "alias": null,
@@ -138,9 +132,17 @@ return {
         ]
       }
     ]
+  },
+  "params": {
+    "operationKind": "subscription",
+    "name": "TodoListUpdateSubscription",
+    "id": null,
+    "text": "subscription TodoListUpdateSubscription(\n  $user: ID!\n) {\n  updatedTodo(userId: $user) {\n    node {\n      complete\n      id\n    }\n  }\n}\n",
+    "metadata": {}
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = 'e9163b88adf21364a4289c3ff06a6610';
+
 module.exports = node;

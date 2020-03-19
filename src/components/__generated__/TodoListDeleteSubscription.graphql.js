@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 9732a7560b7f32ac078a21e5bd2ce29e
+ * @relayHash b892c2eab8f9304330fc691787a98fcc
  */
 
 /* eslint-disable */
@@ -53,8 +53,7 @@ v1 = [
       {
         "kind": "Variable",
         "name": "userId",
-        "variableName": "user",
-        "type": "ID!"
+        "variableName": "user"
       }
     ],
     "concreteType": "DeleteTodoPayload",
@@ -72,27 +71,30 @@ v1 = [
 ];
 return {
   "kind": "Request",
-  "operationKind": "subscription",
-  "name": "TodoListDeleteSubscription",
-  "id": null,
-  "text": "subscription TodoListDeleteSubscription(\n  $user: ID!\n) {\n  deletedTodo(userId: $user) {\n    deletedId\n  }\n}\n",
-  "metadata": {},
   "fragment": {
     "kind": "Fragment",
     "name": "TodoListDeleteSubscription",
     "type": "Subscription",
     "metadata": null,
-    "argumentDefinitions": v0,
-    "selections": v1
+    "argumentDefinitions": (v0/*: any*/),
+    "selections": (v1/*: any*/)
   },
   "operation": {
     "kind": "Operation",
     "name": "TodoListDeleteSubscription",
-    "argumentDefinitions": v0,
-    "selections": v1
+    "argumentDefinitions": (v0/*: any*/),
+    "selections": (v1/*: any*/)
+  },
+  "params": {
+    "operationKind": "subscription",
+    "name": "TodoListDeleteSubscription",
+    "id": null,
+    "text": "subscription TodoListDeleteSubscription(\n  $user: ID!\n) {\n  deletedTodo(userId: $user) {\n    deletedId\n  }\n}\n",
+    "metadata": {}
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = 'cce9c768f846af9534b3df1c9aac67bc';
+
 module.exports = node;

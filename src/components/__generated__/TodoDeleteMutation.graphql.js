@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash f5355d63d6dd2cb50bdb5ad7b7267b0e
+ * @relayHash 7660fcecdce96d3b6116b9ebd6a913a3
  */
 
 /* eslint-disable */
@@ -9,10 +9,10 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type DeleteTodoInput = {
+export type DeleteTodoInput = {|
   id: string,
   clientMutationId?: ?string,
-};
+|};
 export type TodoDeleteMutationVariables = {|
   input: DeleteTodoInput
 |};
@@ -59,8 +59,7 @@ v1 = [
       {
         "kind": "Variable",
         "name": "input",
-        "variableName": "input",
-        "type": "DeleteTodoInput!"
+        "variableName": "input"
       }
     ],
     "concreteType": "DeleteTodoPayload",
@@ -85,27 +84,30 @@ v1 = [
 ];
 return {
   "kind": "Request",
-  "operationKind": "mutation",
-  "name": "TodoDeleteMutation",
-  "id": null,
-  "text": "mutation TodoDeleteMutation(\n  $input: DeleteTodoInput!\n) {\n  deleteTodo(input: $input) {\n    deletedId\n    userId\n  }\n}\n",
-  "metadata": {},
   "fragment": {
     "kind": "Fragment",
     "name": "TodoDeleteMutation",
     "type": "Mutation",
     "metadata": null,
-    "argumentDefinitions": v0,
-    "selections": v1
+    "argumentDefinitions": (v0/*: any*/),
+    "selections": (v1/*: any*/)
   },
   "operation": {
     "kind": "Operation",
     "name": "TodoDeleteMutation",
-    "argumentDefinitions": v0,
-    "selections": v1
+    "argumentDefinitions": (v0/*: any*/),
+    "selections": (v1/*: any*/)
+  },
+  "params": {
+    "operationKind": "mutation",
+    "name": "TodoDeleteMutation",
+    "id": null,
+    "text": "mutation TodoDeleteMutation(\n  $input: DeleteTodoInput!\n) {\n  deleteTodo(input: $input) {\n    deletedId\n    userId\n  }\n}\n",
+    "metadata": {}
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '5c1d2d514aaf1983d6103c59835731bb';
+
 module.exports = node;

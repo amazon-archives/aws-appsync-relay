@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 2d03e20fedd020fd056972f1c4e2904f
+ * @relayHash 80f4bc20ba55b90cd704065ae0db034b
  */
 
 /* eslint-disable */
@@ -9,10 +9,10 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type CreateTodoInput = {
+export type CreateTodoInput = {|
   text: string,
   clientMutationId?: ?string,
-};
+|};
 export type CreateTodoMutationVariables = {|
   input: CreateTodoInput
 |};
@@ -64,8 +64,7 @@ v1 = [
   {
     "kind": "Variable",
     "name": "input",
-    "variableName": "input",
-    "type": "CreateTodoInput!"
+    "variableName": "input"
   }
 ],
 v2 = {
@@ -91,24 +90,19 @@ v4 = {
 };
 return {
   "kind": "Request",
-  "operationKind": "mutation",
-  "name": "CreateTodoMutation",
-  "id": null,
-  "text": "mutation CreateTodoMutation(\n  $input: CreateTodoInput!\n) {\n  createTodo(input: $input) {\n    edge {\n      node {\n        complete\n        text\n        id\n      }\n    }\n    userId\n  }\n}\n",
-  "metadata": {},
   "fragment": {
     "kind": "Fragment",
     "name": "CreateTodoMutation",
     "type": "Mutation",
     "metadata": null,
-    "argumentDefinitions": v0,
+    "argumentDefinitions": (v0/*: any*/),
     "selections": [
       {
         "kind": "LinkedField",
         "alias": null,
         "name": "createTodo",
         "storageKey": null,
-        "args": v1,
+        "args": (v1/*: any*/),
         "concreteType": "CreateTodoPayload",
         "plural": false,
         "selections": [
@@ -130,13 +124,13 @@ return {
                 "concreteType": "Todo",
                 "plural": false,
                 "selections": [
-                  v2,
-                  v3
+                  (v2/*: any*/),
+                  (v3/*: any*/)
                 ]
               }
             ]
           },
-          v4
+          (v4/*: any*/)
         ]
       }
     ]
@@ -144,14 +138,14 @@ return {
   "operation": {
     "kind": "Operation",
     "name": "CreateTodoMutation",
-    "argumentDefinitions": v0,
+    "argumentDefinitions": (v0/*: any*/),
     "selections": [
       {
         "kind": "LinkedField",
         "alias": null,
         "name": "createTodo",
         "storageKey": null,
-        "args": v1,
+        "args": (v1/*: any*/),
         "concreteType": "CreateTodoPayload",
         "plural": false,
         "selections": [
@@ -173,8 +167,8 @@ return {
                 "concreteType": "Todo",
                 "plural": false,
                 "selections": [
-                  v2,
-                  v3,
+                  (v2/*: any*/),
+                  (v3/*: any*/),
                   {
                     "kind": "ScalarField",
                     "alias": null,
@@ -186,13 +180,21 @@ return {
               }
             ]
           },
-          v4
+          (v4/*: any*/)
         ]
       }
     ]
+  },
+  "params": {
+    "operationKind": "mutation",
+    "name": "CreateTodoMutation",
+    "id": null,
+    "text": "mutation CreateTodoMutation(\n  $input: CreateTodoInput!\n) {\n  createTodo(input: $input) {\n    edge {\n      node {\n        complete\n        text\n        id\n      }\n    }\n    userId\n  }\n}\n",
+    "metadata": {}
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '4634d2390811c36de4232fe3806cb075';
+
 module.exports = node;

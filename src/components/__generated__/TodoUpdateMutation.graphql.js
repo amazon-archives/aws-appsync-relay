@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 7dcac7eecb6b51b1169a054e0fecb718
+ * @relayHash f845ab6d7c6b6852d63d35372b92fea5
  */
 
 /* eslint-disable */
@@ -9,11 +9,11 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type UpdateTodoInput = {
+export type UpdateTodoInput = {|
   id: string,
   complete?: ?boolean,
   clientMutationId?: ?string,
-};
+|};
 export type TodoUpdateMutationVariables = {|
   input: UpdateTodoInput
 |};
@@ -59,8 +59,7 @@ v1 = [
   {
     "kind": "Variable",
     "name": "input",
-    "variableName": "input",
-    "type": "UpdateTodoInput!"
+    "variableName": "input"
   }
 ],
 v2 = {
@@ -79,24 +78,19 @@ v3 = {
 };
 return {
   "kind": "Request",
-  "operationKind": "mutation",
-  "name": "TodoUpdateMutation",
-  "id": null,
-  "text": "mutation TodoUpdateMutation(\n  $input: UpdateTodoInput!\n) {\n  updateTodo(input: $input) {\n    node {\n      complete\n      id\n    }\n    userId\n  }\n}\n",
-  "metadata": {},
   "fragment": {
     "kind": "Fragment",
     "name": "TodoUpdateMutation",
     "type": "Mutation",
     "metadata": null,
-    "argumentDefinitions": v0,
+    "argumentDefinitions": (v0/*: any*/),
     "selections": [
       {
         "kind": "LinkedField",
         "alias": null,
         "name": "updateTodo",
         "storageKey": null,
-        "args": v1,
+        "args": (v1/*: any*/),
         "concreteType": "UpdateTodoPayload",
         "plural": false,
         "selections": [
@@ -109,10 +103,10 @@ return {
             "concreteType": "Todo",
             "plural": false,
             "selections": [
-              v2
+              (v2/*: any*/)
             ]
           },
-          v3
+          (v3/*: any*/)
         ]
       }
     ]
@@ -120,14 +114,14 @@ return {
   "operation": {
     "kind": "Operation",
     "name": "TodoUpdateMutation",
-    "argumentDefinitions": v0,
+    "argumentDefinitions": (v0/*: any*/),
     "selections": [
       {
         "kind": "LinkedField",
         "alias": null,
         "name": "updateTodo",
         "storageKey": null,
-        "args": v1,
+        "args": (v1/*: any*/),
         "concreteType": "UpdateTodoPayload",
         "plural": false,
         "selections": [
@@ -140,7 +134,7 @@ return {
             "concreteType": "Todo",
             "plural": false,
             "selections": [
-              v2,
+              (v2/*: any*/),
               {
                 "kind": "ScalarField",
                 "alias": null,
@@ -150,13 +144,21 @@ return {
               }
             ]
           },
-          v3
+          (v3/*: any*/)
         ]
       }
     ]
+  },
+  "params": {
+    "operationKind": "mutation",
+    "name": "TodoUpdateMutation",
+    "id": null,
+    "text": "mutation TodoUpdateMutation(\n  $input: UpdateTodoInput!\n) {\n  updateTodo(input: $input) {\n    node {\n      complete\n      id\n    }\n    userId\n  }\n}\n",
+    "metadata": {}
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = '1686c973944c12c4375d14ccea72d991';
+
 module.exports = node;

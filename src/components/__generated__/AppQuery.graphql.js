@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 25944c83124aa71b6d2add1e4b2fbec6
+ * @relayHash a7ae53e00192f8ff10118e322bd4f16f
  */
 
 /* eslint-disable */
@@ -61,14 +61,14 @@ fragment TodoList_viewer_yu5n1 on Viewer {
   }
 }
 
-fragment Todo_viewer on Viewer {
-  id
-}
-
 fragment Todo_todo on Todo {
   id
   complete
   text
+}
+
+fragment Todo_viewer on Viewer {
+  id
 }
 */
 
@@ -92,23 +92,17 @@ v2 = [
   {
     "kind": "Variable",
     "name": "first",
-    "variableName": "count",
-    "type": "Int"
+    "variableName": "count"
   }
 ];
 return {
   "kind": "Request",
-  "operationKind": "query",
-  "name": "AppQuery",
-  "id": null,
-  "text": "query AppQuery(\n  $count: Int\n) {\n  viewer {\n    id\n    ...CreateTodo_viewer\n    ...TodoList_viewer_yu5n1\n  }\n}\n\nfragment CreateTodo_viewer on Viewer {\n  id\n}\n\nfragment TodoList_viewer_yu5n1 on Viewer {\n  id\n  ...Todo_viewer\n  listTodos(first: $count) {\n    edges {\n      node {\n        id\n        ...Todo_todo\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment Todo_viewer on Viewer {\n  id\n}\n\nfragment Todo_todo on Todo {\n  id\n  complete\n  text\n}\n",
-  "metadata": {},
   "fragment": {
     "kind": "Fragment",
     "name": "AppQuery",
     "type": "Query",
     "metadata": null,
-    "argumentDefinitions": v0,
+    "argumentDefinitions": (v0/*: any*/),
     "selections": [
       {
         "kind": "LinkedField",
@@ -119,7 +113,7 @@ return {
         "concreteType": "Viewer",
         "plural": false,
         "selections": [
-          v1,
+          (v1/*: any*/),
           {
             "kind": "FragmentSpread",
             "name": "CreateTodo_viewer",
@@ -132,8 +126,7 @@ return {
               {
                 "kind": "Variable",
                 "name": "count",
-                "variableName": "count",
-                "type": null
+                "variableName": "count"
               }
             ]
           }
@@ -144,7 +137,7 @@ return {
   "operation": {
     "kind": "Operation",
     "name": "AppQuery",
-    "argumentDefinitions": v0,
+    "argumentDefinitions": (v0/*: any*/),
     "selections": [
       {
         "kind": "LinkedField",
@@ -155,13 +148,13 @@ return {
         "concreteType": "Viewer",
         "plural": false,
         "selections": [
-          v1,
+          (v1/*: any*/),
           {
             "kind": "LinkedField",
             "alias": null,
             "name": "listTodos",
             "storageKey": null,
-            "args": v2,
+            "args": (v2/*: any*/),
             "concreteType": "TodoConnection",
             "plural": false,
             "selections": [
@@ -183,7 +176,7 @@ return {
                     "concreteType": "Todo",
                     "plural": false,
                     "selections": [
-                      v1,
+                      (v1/*: any*/),
                       {
                         "kind": "ScalarField",
                         "alias": null,
@@ -247,7 +240,7 @@ return {
             "kind": "LinkedHandle",
             "alias": null,
             "name": "listTodos",
-            "args": v2,
+            "args": (v2/*: any*/),
             "handle": "connection",
             "key": "TodoList_listTodos",
             "filters": null
@@ -255,9 +248,17 @@ return {
         ]
       }
     ]
+  },
+  "params": {
+    "operationKind": "query",
+    "name": "AppQuery",
+    "id": null,
+    "text": "query AppQuery(\n  $count: Int\n) {\n  viewer {\n    id\n    ...CreateTodo_viewer\n    ...TodoList_viewer_yu5n1\n  }\n}\n\nfragment CreateTodo_viewer on Viewer {\n  id\n}\n\nfragment TodoList_viewer_yu5n1 on Viewer {\n  id\n  ...Todo_viewer\n  listTodos(first: $count) {\n    edges {\n      node {\n        id\n        ...Todo_todo\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n\nfragment Todo_todo on Todo {\n  id\n  complete\n  text\n}\n\nfragment Todo_viewer on Viewer {\n  id\n}\n",
+    "metadata": {}
   }
 };
 })();
 // prettier-ignore
 (node/*: any*/).hash = 'a8ade4fce8fc38befe514e37d4a42722';
+
 module.exports = node;
